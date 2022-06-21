@@ -18,8 +18,8 @@ func New[T any](capacity int, values ...T) stack[T] {
 	return s
 }
 
-func (s *stack[T]) Push(values ...T) {
-	s.items = append(s.items, values...)
+func (s *stack[T]) Push(value T) {
+	s.items = append(s.items, value)
 }
 
 func (s *stack[T]) Pop() T {

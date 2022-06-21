@@ -46,10 +46,8 @@ func TestPush_WithValues_ItemsAreCorrect(t *testing.T) {
 	values := make([]int, 0, cap)
 
 	for i := 0; i < cap; i++ {
-		values = append(values, i)
+		stack.Push(i)
 	}
-
-	stack.Push(values...)
 
 	for i := 0; i < len(values); i++ {
 		assert.Equal(t, stack.items[i], values[i])
