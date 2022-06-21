@@ -18,8 +18,8 @@ func New[T any](capacity int, values ...T) stack[T] {
 	return s
 }
 
-func (s *stack[T]) Push(value T) {
-	s.items = append(s.items, value)
+func (s *stack[T]) Push(values ...T) {
+	s.items = append(s.items, values...)
 }
 
 func (s *stack[T]) Pop() T {
@@ -34,16 +34,20 @@ func (s *stack[T]) Pop() T {
 	return last
 }
 
-func (s *stack[T]) Peek() *T {
+func (s *stack[T]) Peek() T {
 	if s.items == nil || len(s.items) == 0 {
 		panic("The stack is empty.")
 	}
 
-	return &s.items[len(s.items)-1]
+	return s.items[len(s.items)-1]
 }
 
 func (s *stack[T]) Count() int {
 	return len(s.items)
+}
+
+func (s *stack[T]) Capacity() int {
+	return cap(s.items)
 }
 
 func (s *stack[T]) IsEmpty() bool {
