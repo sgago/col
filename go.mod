@@ -1,4 +1,4 @@
-module collections
+module github.com/sgago/collections
 
 go 1.18
 
