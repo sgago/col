@@ -1,8 +1,8 @@
 package binarytree
 
 import (
-	"collections"
-	"collections/err"
+	"github.com/sgago/collections"
+	"github.com/sgago/collections/err"
 )
 
 type node[T any] struct {

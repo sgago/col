@@ -1,7 +1,7 @@
 package queue
 
 import (
-	"collections/slice"
+	"github.com/sgago/collections/slice"
 )
 
 type queue[T any] struct {

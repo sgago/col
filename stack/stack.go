@@ -1,7 +1,7 @@
 package stack
 
 import (
-	"collections/slice"
+	"github.com/sgago/collections/slice"
 )
 
 type stack[T any] struct {

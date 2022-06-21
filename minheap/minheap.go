@@ -1,8 +1,8 @@
 package minheap
 
 import (
-	"collections"
-	"collections/slice"
+	"github.com/sgago/collections"
+	"github.com/sgago/collections/slice"
 )
 
 type minheap[T any] struct {
