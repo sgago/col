@@ -35,7 +35,7 @@ func (s *stack[T]) Push(value T) {
 	s.elements = append(s.elements, value)
 }
 
-// PushMany adds pushes multiple values onto the stack.
+// PushMany adds multiple values on top of the stack.
 //
 // Values are pushed into the stack by index in ascending (non-decreasing) order.
 // In other words, the first value, values[0], will be pushed first.
@@ -90,7 +90,7 @@ func (s *stack[T]) IsEmpty() bool {
 	return s.Count() == 0
 }
 
-// Clear removes all elements from stack.
+// Clear removes all elements from the stack.
 // It maintains the stack's existing capacity.
 func (s *stack[T]) Clear() {
 	s.elements = slice.Clear(s.elements)

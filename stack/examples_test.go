@@ -27,6 +27,7 @@ func Example() {
 	fmt.Println(stack.Pop()) // Prints 3
 	fmt.Println(stack.Pop()) // Prints 2
 	fmt.Println(stack.Pop()) // Prints 1
+
 	// Output:
 	// 3
 	// 3
