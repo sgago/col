@@ -24,6 +24,92 @@ func TestLast(t *testing.T) {
 	assert.Equal(t, last, 5)
 }
 
+func TestRemoveFirst(t *testing.T) {
+	s := make([]int, 0, 2)
+	s = append(s, 111, 222)
+
+	s = RemoveFirst(s)
+
+	assert.Equal(t, 1, len(s))
+	assert.Equal(t, s[0], 222)
+}
+
+func TestRemoveLast(t *testing.T) {
+	s := make([]int, 0, 2)
+	s = append(s, 111, 222)
+
+	s = RemoveLast(s)
+
+	assert.Equal(t, 1, len(s))
+	assert.Equal(t, s[0], 111)
+}
+
+func TestSwap(t *testing.T) {
+	s := make([]int, 0, 2)
+	s = append(s, 111, 222, 333)
+
+	s = Swap(s, 0, 2)
+
+	assert.Equal(t, 3, len(s))
+	assert.Equal(t, s[0], 333)
+	assert.Equal(t, s[1], 222)
+	assert.Equal(t, s[2], 111)
+}
+
+func TestIndexOf_ValueDoesNotExist_ReturnedIndexNegative1(t *testing.T) {
+	s := make([]int, 0, 5)
+	s = append(s, 1, 2, 3, 4, 5)
+
+	actual, _ := IndexOf(s, 6)
+
+	assert.Equal(t, -1, actual)
+}
+
+func TestIndexOf_ValueDoesNotExist_ReturnsError(t *testing.T) {
+	s := make([]int, 0, 5)
+	s = append(s, 1, 2, 3, 4, 5)
+
+	_, e := IndexOf(s, 6)
+
+	assert.NotNil(t, e)
+}
+
+func TestIndexOf_ValueExists_ReturnsIndex(t *testing.T) {
+	s := make([]int, 0, 5)
+	s = append(s, 1, 2, 3, 4, 5)
+
+	actual, _ := IndexOf(s, 4)
+
+	assert.Equal(t, 3, actual)
+}
+
+func TestIndexOf_ValueExists_ReturnsNilError(t *testing.T) {
+	s := make([]int, 0, 5)
+	s = append(s, 1, 2, 3, 4, 5)
+
+	_, e := IndexOf(s, 4)
+
+	assert.Nil(t, e)
+}
+
+func TestContains_ValueDoesNotExist_ReturnsFalse(t *testing.T) {
+	s := make([]int, 0, 5)
+	s = append(s, 1, 2, 3, 4, 5)
+
+	actual := Contains(s, 6)
+
+	assert.False(t, actual)
+}
+
+func TestContains_ValueExists_ReturnsTrue(t *testing.T) {
+	s := make([]int, 0, 5)
+	s = append(s, 1, 2, 3, 4, 5)
+
+	actual := Contains(s, 5)
+
+	assert.True(t, actual)
+}
+
 func TestClearLengthIsZero(t *testing.T) {
 	s := make([]int, 0, 5)
 	s = append(s, 1, 2, 3, 4, 5)

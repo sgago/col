@@ -30,16 +30,6 @@ func Swap[T any](slice []T, indexA int, indexB int) []T {
 	return slice
 }
 
-func Contains[T comparable](slice []T, value T) bool {
-	for _, val := range slice {
-		if value == val {
-			return true
-		}
-	}
-
-	return false
-}
-
 func IndexOf[T comparable](slice []T, value T) (int, error) {
 	for index, val := range slice {
 		if value == val {
@@ -48,4 +38,10 @@ func IndexOf[T comparable](slice []T, value T) (int, error) {
 	}
 
 	return -1, &err.NotFound{}
+}
+
+func Contains[T comparable](slice []T, value T) bool {
+	_, e := IndexOf(slice, value)
+
+	return e == nil
 }
