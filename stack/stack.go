@@ -4,20 +4,21 @@
 //	1. Push which adds an element to the top of the stack.
 //	2. Pop which removes and returns the top element of the stack.
 //
-// The stack data structure is NOT thread-safe.
+// This stack data structure is NOT thread-safe.
 package stack
 
 import (
 	"github.com/sgago/collections/slice"
 )
 
+// An unbounded, slice-backed stack data structure with type T elements.
 type stack[T any] struct {
 	elements []T
 }
 
-// Allocates and initializes a new stack of type T elements.
+// Allocates and initializes a new stack with type T elements.
 //
-// Values are pushed into the stack by index in ascending (non-decreasing) order.
+// Values are pushed by index in ascending (non-decreasing) order.
 // In other wrods, the first value, values[0], will be pushed first.
 // The last value, values[len(values)-1] will be pushed last and appear
 // on top of the stack.
@@ -37,10 +38,10 @@ func (s *stack[T]) Push(value T) {
 // PushMany adds pushes multiple values onto the stack.
 //
 // Values are pushed into the stack by index in ascending (non-decreasing) order.
-// In other wrods, the first value, values[0], will be pushed first.
+// In other words, the first value, values[0], will be pushed first.
 // The last value, values[len(values)-1] will be pushed last and appear on top of the stack.
 //
-// If no values are supplied, then nothing will be pushed to the stack.
+// If no values are supplied, then nothing will be pushed.
 func (s *stack[T]) PushMany(values ...T) {
 	if len(values) != 0 {
 		s.elements = append(s.elements, values...)

@@ -11,21 +11,22 @@ func Example() {
 	// Declare a stack of integers
 	stack := New[int](capacity)
 
-	// Put values into the stack
-	stack.PushMany(1)
-	stack.PushMany(2)
-	stack.PushMany(3)
+	// Put a value onto the stack
+	stack.Push(1)
 
-	// Or create and push range in one line of code
-	// stack.New(capacity, 1, 2, 3)
+	// Push multiple values at once onto the stack, 2 is pushed first, then 3
+	stack.PushMany(2, 3)
+
+	// Or create a stack and push many values in one line of code
+	// stack := stack.New(capacity, 1, 2, 3)
 
 	// Look at the top value on the stack
-	fmt.Println(stack.Peek())
+	fmt.Println(stack.Peek()) // Prints 3
 
 	// Take values out of the stack
-	fmt.Println(stack.Pop())
-	fmt.Println(stack.Pop())
-	fmt.Println(stack.Pop())
+	fmt.Println(stack.Pop()) // Prints 3
+	fmt.Println(stack.Pop()) // Prints 2
+	fmt.Println(stack.Pop()) // Prints 1
 	// Output:
 	// 3
 	// 3
