@@ -12,9 +12,9 @@ func Example() {
 	stack := New[int](capacity)
 
 	// Put values into the stack
-	stack.Push(1)
-	stack.Push(2)
-	stack.Push(3)
+	stack.PushMany(1)
+	stack.PushMany(2)
+	stack.PushMany(3)
 
 	// Or create and push range in one line of code
 	// stack.New(capacity, 1, 2, 3)

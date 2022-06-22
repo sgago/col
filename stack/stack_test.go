@@ -54,6 +54,18 @@ func TestPush_WithValues_ItemsAreCorrect(t *testing.T) {
 	}
 }
 
+func TestPushRange_WithNoValues_NothingPushed(t *testing.T) {
+	cap := 5
+
+	stack := New[int](cap)
+
+	for i := 0; i < cap; i++ {
+		stack.PushMany()
+	}
+
+	assert.Empty(t, stack.items)
+}
+
 func TestPop_WithValues_PoppedValueIsCorrect(t *testing.T) {
 	cap := 5
 
