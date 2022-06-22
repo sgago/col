@@ -26,7 +26,7 @@ type queue[T any] struct {
 func New[T any](capacity int, values ...T) queue[T] {
 	q := queue[T]{elements: make([]T, 0, capacity)}
 
-	q.EnqueueMany(values)
+	q.EnqueueMany(values...)
 
 	return q
 }
@@ -44,7 +44,7 @@ func (q *queue[T]) Enqueue(value T) {
 // appear at the back of the queue.
 //
 // If no values are supplied, then nothing will be enqueued.
-func (q *queue[T]) EnqueueMany(values []T) {
+func (q *queue[T]) EnqueueMany(values ...T) {
 	q.elements = append(q.elements, values...)
 }
 
