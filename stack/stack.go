@@ -12,17 +12,17 @@ import (
 )
 
 type stack[T any] struct {
-	items []T
+	elements []T
 }
 
-// Allocates and initializes a new stack with type T elements.
+// Allocates and initializes a new stack of type T elements.
 //
-// Values are pushed into the stack by the received index in ascending (non-decreasing) order.
+// Values are pushed into the stack by index in ascending (non-decreasing) order.
 // In other wrods, the first value, values[0], will be pushed first.
 // The last value, values[len(values)-1] will be pushed last and appear
 // on top of the stack.
 func New[T any](capacity int, values ...T) stack[T] {
-	s := stack[T]{items: make([]T, 0, capacity)}
+	s := stack[T]{elements: make([]T, 0, capacity)}
 
 	s.PushMany(values...)
 
@@ -31,7 +31,7 @@ func New[T any](capacity int, values ...T) stack[T] {
 
 // Push adds a value to the top of the stack.
 func (s *stack[T]) Push(value T) {
-	s.items = append(s.items, value)
+	s.elements = append(s.elements, value)
 }
 
 // PushMany adds pushes multiple values onto the stack.
@@ -43,7 +43,7 @@ func (s *stack[T]) Push(value T) {
 // If no values are supplied, then nothing will be pushed to the stack.
 func (s *stack[T]) PushMany(values ...T) {
 	if len(values) != 0 {
-		s.items = append(s.items, values...)
+		s.elements = append(s.elements, values...)
 	}
 }
 
@@ -51,13 +51,13 @@ func (s *stack[T]) PushMany(values ...T) {
 //
 // This method panics if the stack is empty.
 func (s *stack[T]) Pop() T {
-	if s.items == nil || len(s.items) == 0 {
+	if s.elements == nil || len(s.elements) == 0 {
 		panic("The stack is empty.")
 	}
 
-	last := slice.Last(s.items)
+	last := slice.Last(s.elements)
 
-	s.items = slice.RemoveLast(s.items)
+	s.elements = slice.RemoveLast(s.elements)
 
 	return last
 }
@@ -66,21 +66,21 @@ func (s *stack[T]) Pop() T {
 //
 // This method panics if the stack is empty.
 func (s *stack[T]) Peek() T {
-	if s.items == nil || len(s.items) == 0 {
+	if s.elements == nil || len(s.elements) == 0 {
 		panic("The stack is empty.")
 	}
 
-	return s.items[len(s.items)-1]
+	return s.elements[len(s.elements)-1]
 }
 
 // Count returns the number of elements in the stack.
 func (s *stack[T]) Count() int {
-	return len(s.items)
+	return len(s.elements)
 }
 
 // Capacity returns the capacity of the stack.
 func (s *stack[T]) Capacity() int {
-	return cap(s.items)
+	return cap(s.elements)
 }
 
 // IsEmpty returns true if the stack has no elements;
@@ -92,5 +92,5 @@ func (s *stack[T]) IsEmpty() bool {
 // Clear removes all elements from stack.
 // It maintains the stack's existing capacity.
 func (s *stack[T]) Clear() {
-	s.items = slice.Clear(s.items)
+	s.elements = slice.Clear(s.elements)
 }

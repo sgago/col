@@ -34,7 +34,7 @@ func TestNew_WithValues_ItemsAreCorrect(t *testing.T) {
 	stack := New(cap, values...)
 
 	for i := 0; i < len(values); i++ {
-		assert.Equal(t, stack.items[i], values[i])
+		assert.Equal(t, stack.elements[i], values[i])
 	}
 }
 
@@ -50,7 +50,7 @@ func TestPush_WithValues_ItemsAreCorrect(t *testing.T) {
 	}
 
 	for i := 0; i < len(values); i++ {
-		assert.Equal(t, stack.items[i], values[i])
+		assert.Equal(t, stack.elements[i], values[i])
 	}
 }
 
@@ -63,7 +63,7 @@ func TestPushRange_WithNoValues_NothingPushed(t *testing.T) {
 		stack.PushMany()
 	}
 
-	assert.Empty(t, stack.items)
+	assert.Empty(t, stack.elements)
 }
 
 func TestPop_WithValues_PoppedValueIsCorrect(t *testing.T) {
@@ -96,7 +96,7 @@ func TestPop_WithValues_ItemsAreCorrect(t *testing.T) {
 	stack.Pop()
 
 	for i := 0; i < len(values)-1; i++ {
-		assert.Equal(t, stack.items[i], values[i])
+		assert.Equal(t, stack.elements[i], values[i])
 	}
 }
 
@@ -130,7 +130,7 @@ func TestPeek_WithValues_ItemsAreCorrect(t *testing.T) {
 	stack.Peek()
 
 	for i := 0; i < len(values); i++ {
-		assert.Equal(t, stack.items[i], values[i])
+		assert.Equal(t, stack.elements[i], values[i])
 	}
 }
 
