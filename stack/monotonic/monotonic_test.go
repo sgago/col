@@ -190,6 +190,18 @@ func TestPop_WithValues_ElementsAreCorrect(t *testing.T) {
 	assert.Equal(t, kv4, monostack.elements[1])
 }
 
+func TestPop_WithNilElements_Panics(t *testing.T) {
+	stack := monostack[int]{}
+
+	assert.Panics(t, func() { stack.Pop() })
+}
+
+func TestPop_WithZeroElements_Panics(t *testing.T) {
+	stack := monostack[int]{elements: make([]collections.KeyValue[int], 0)}
+
+	assert.Panics(t, func() { stack.Pop() })
+}
+
 func TestPeek_WithValues_PeekedValueIsCorrect(t *testing.T) {
 	cap := 3
 	asc := false
@@ -212,6 +224,18 @@ func TestPeek_WithValues_ElementsAreCorrect(t *testing.T) {
 	assert.Equal(t, monostack.elements[0], kv5)
 	assert.Equal(t, monostack.elements[1], kv4)
 	assert.Equal(t, monostack.elements[2], kv3)
+}
+
+func TestPeek_WithNilElements_Panics(t *testing.T) {
+	stack := monostack[int]{}
+
+	assert.Panics(t, func() { stack.Peek() })
+}
+
+func TestPeek_WithZeroElements_Panics(t *testing.T) {
+	stack := monostack[int]{elements: make([]collections.KeyValue[int], 0)}
+
+	assert.Panics(t, func() { stack.Peek() })
 }
 
 func TestIsEmpty_WithElements_IsFalse(t *testing.T) {

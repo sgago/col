@@ -22,7 +22,7 @@ func TestNew_WithNoValues_CapacityIsCorrect(t *testing.T) {
 	assert.Equal(t, cap, stack.Capacity())
 }
 
-func TestNew_WithValues_ItemsAreCorrect(t *testing.T) {
+func TestNew_WithValues_ElementsAreCorrect(t *testing.T) {
 	cap := 5
 
 	values := make([]int, 0, cap)
@@ -38,7 +38,7 @@ func TestNew_WithValues_ItemsAreCorrect(t *testing.T) {
 	}
 }
 
-func TestPush_WithValues_ItemsAreCorrect(t *testing.T) {
+func TestPush_WithValues_ElementsAreCorrect(t *testing.T) {
 	cap := 5
 
 	stack := New[int](cap)
@@ -82,7 +82,7 @@ func TestPop_WithValues_PoppedValueIsCorrect(t *testing.T) {
 	assert.Equal(t, values[len(values)-1], actual)
 }
 
-func TestPop_WithValues_ItemsAreCorrect(t *testing.T) {
+func TestPop_WithValues_ElementsAreCorrect(t *testing.T) {
 	cap := 5
 
 	values := make([]int, 0, cap)
@@ -98,6 +98,18 @@ func TestPop_WithValues_ItemsAreCorrect(t *testing.T) {
 	for i := 0; i < len(values)-1; i++ {
 		assert.Equal(t, stack.elements[i], values[i])
 	}
+}
+
+func TestPop_WithNilElements_Panics(t *testing.T) {
+	stack := stack[int]{}
+
+	assert.Panics(t, func() { stack.Pop() })
+}
+
+func TestPop_WithZeroElements_Panics(t *testing.T) {
+	stack := stack[int]{elements: make([]int, 0)}
+
+	assert.Panics(t, func() { stack.Pop() })
 }
 
 func TestPeek_WithValues_PeekedValueIsCorrect(t *testing.T) {
@@ -116,7 +128,7 @@ func TestPeek_WithValues_PeekedValueIsCorrect(t *testing.T) {
 	assert.Equal(t, values[len(values)-1], actual)
 }
 
-func TestPeek_WithValues_ItemsAreCorrect(t *testing.T) {
+func TestPeek_WithValues_ElementsAreCorrect(t *testing.T) {
 	cap := 5
 
 	values := make([]int, 0, cap)
@@ -132,6 +144,18 @@ func TestPeek_WithValues_ItemsAreCorrect(t *testing.T) {
 	for i := 0; i < len(values); i++ {
 		assert.Equal(t, stack.elements[i], values[i])
 	}
+}
+
+func TestPeek_WithNilElements_Panics(t *testing.T) {
+	stack := stack[int]{}
+
+	assert.Panics(t, func() { stack.Peek() })
+}
+
+func TestPeek_WithZeroElements_Panics(t *testing.T) {
+	stack := stack[int]{elements: make([]int, 0)}
+
+	assert.Panics(t, func() { stack.Peek() })
 }
 
 func TestIsEmpty_WithElements_IsFalse(t *testing.T) {

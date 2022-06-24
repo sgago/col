@@ -100,6 +100,18 @@ func TestPop_WithValues_ElementsAreCorrect(t *testing.T) {
 	}
 }
 
+func TestPop_WithNilElements_Panics(t *testing.T) {
+	stack := concstack[int]{}
+
+	assert.Panics(t, func() { stack.Pop() })
+}
+
+func TestPop_WithZeroElements_Panics(t *testing.T) {
+	stack := concstack[int]{elements: make([]int, 0)}
+
+	assert.Panics(t, func() { stack.Pop() })
+}
+
 func TestPeek_WithValues_PeekedValueIsCorrect(t *testing.T) {
 	cap := 5
 
@@ -132,6 +144,18 @@ func TestPeek_WithValues_ElementsAreCorrect(t *testing.T) {
 	for i := 0; i < len(values); i++ {
 		assert.Equal(t, stack.elements[i], values[i])
 	}
+}
+
+func TestPeek_WithNilElements_Panics(t *testing.T) {
+	stack := concstack[int]{}
+
+	assert.Panics(t, func() { stack.Peek() })
+}
+
+func TestPeek_WithZeroElements_Panics(t *testing.T) {
+	stack := concstack[int]{elements: make([]int, 0)}
+
+	assert.Panics(t, func() { stack.Peek() })
 }
 
 func TestIsEmpty_WithElements_IsFalse(t *testing.T) {
