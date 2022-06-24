@@ -18,10 +18,21 @@ import (
 	"github.com/sgago/collections/slice"
 )
 
+// The monotonicity order, that is, always increasing or decreasing.
+type Order bool
+
+const (
+	// Indicates a monotonic stack where values are always increasing (little to big).
+	Increasing Order = true
+
+	// Indicates a monotonic stack where values are always decreasing (big to little).
+	Decreasing Order = false
+)
+
 // An unbounded, slice-backed monotonic stack data structure with type T elements.
 type monostack[T any] struct {
-	ascending bool
-	elements  []collections.KeyValue[T]
+	order    Order
+	elements []collections.KeyValue[T]
 }
 
 // Allocates and initializes a new monotonic stack with type T elements.
@@ -32,10 +43,10 @@ type monostack[T any] struct {
 // In other wrods, the first value, values[0], will be pushed first.
 // The last value, values[len(values)-1] will be pushed last and appear
 // on top of the stack.
-func New[T any](capacity int, ascending bool, kvs ...collections.KeyValue[T]) (*monostack[T], []collections.KeyValue[T]) {
+func New[T any](capacity int, order Order, kvs ...collections.KeyValue[T]) (*monostack[T], []collections.KeyValue[T]) {
 	s := monostack[T]{
-		ascending: ascending,
-		elements:  make([]collections.KeyValue[T], 0, capacity),
+		order:    order,
+		elements: make([]collections.KeyValue[T], 0, capacity),
 	}
 
 	popped := s.PushMany(kvs...)
@@ -46,7 +57,7 @@ func New[T any](capacity int, ascending bool, kvs ...collections.KeyValue[T]) (*
 // Push adds a value to the top of the stack.
 // Elements that would break the monotonic condition are returned to the caller.
 func (s *monostack[T]) Push(kv collections.KeyValue[T]) []collections.KeyValue[T] {
-	if s.ascending {
+	if s.order {
 		return s.pushAsc(kv)
 	}
 

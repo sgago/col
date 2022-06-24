@@ -13,27 +13,25 @@ var kv3 collections.KeyValue[int] = collections.KeyValue[int]{Key: 3, Value: 3}
 var kv4 collections.KeyValue[int] = collections.KeyValue[int]{Key: 4, Value: 4}
 var kv5 collections.KeyValue[int] = collections.KeyValue[int]{Key: 5, Value: 5}
 
+// TODO: Needs tests for when we add the the same value over and over again.
+
 func TestNew_WithNoValues_CountIsZero(t *testing.T) {
 	cap := 5
-	asc := false
 
-	monostack, _ := New[int](cap, asc)
+	monostack, _ := New[int](cap, Decreasing)
 
 	assert.Zero(t, monostack.Count())
 }
 
 func TestNew_WithNoValues_CapacityIsCorrect(t *testing.T) {
 	cap := 3
-	asc := false
 
-	monostack, _ := New[int](cap, asc)
+	monostack, _ := New[int](cap, Decreasing)
 
 	assert.Equal(t, cap, monostack.Capacity())
 }
 
 func TestNew_WithDescValues_ElementsAreCorrect(t *testing.T) {
-	asc := false
-
 	values := []collections.KeyValue[int]{
 		kv4,
 		kv1,
@@ -41,7 +39,7 @@ func TestNew_WithDescValues_ElementsAreCorrect(t *testing.T) {
 		kv2,
 	}
 
-	monostack, _ := New(len(values), asc, values...)
+	monostack, _ := New(len(values), Decreasing, values...)
 
 	assert.Equal(t, 3, monostack.Count())
 	assert.Equal(t, kv4, monostack.elements[0])
@@ -50,8 +48,6 @@ func TestNew_WithDescValues_ElementsAreCorrect(t *testing.T) {
 }
 
 func TestNew_WithAscValues_ElementsAreCorrect(t *testing.T) {
-	asc := true
-
 	values := []collections.KeyValue[int]{
 		kv4,
 		kv1,
@@ -59,7 +55,7 @@ func TestNew_WithAscValues_ElementsAreCorrect(t *testing.T) {
 		kv2,
 	}
 
-	monostack, _ := New(len(values), asc, values...)
+	monostack, _ := New(len(values), Increasing, values...)
 
 	assert.Equal(t, 2, monostack.Count())
 	assert.Equal(t, kv1, monostack.elements[0])
@@ -67,8 +63,6 @@ func TestNew_WithAscValues_ElementsAreCorrect(t *testing.T) {
 }
 
 func TestNew_WithDescValues_PoppedValuesAreCorrect(t *testing.T) {
-	asc := false
-
 	values := []collections.KeyValue[int]{
 		kv4,
 		kv1,
@@ -76,15 +70,13 @@ func TestNew_WithDescValues_PoppedValuesAreCorrect(t *testing.T) {
 		kv2,
 	}
 
-	_, popped := New(len(values), asc, values...)
+	_, popped := New(len(values), Decreasing, values...)
 
 	assert.Equal(t, 1, len(popped))
 	assert.Equal(t, kv1, popped[0])
 }
 
 func TestNew_WithAscValues_PoppedValuesAreCorrect(t *testing.T) {
-	asc := true
-
 	values := []collections.KeyValue[int]{
 		kv4,
 		kv1,
@@ -92,7 +84,7 @@ func TestNew_WithAscValues_PoppedValuesAreCorrect(t *testing.T) {
 		kv2,
 	}
 
-	_, popped := New(len(values), asc, values...)
+	_, popped := New(len(values), Increasing, values...)
 
 	assert.Equal(t, 2, len(popped))
 	assert.Equal(t, kv4, popped[0])
@@ -101,9 +93,8 @@ func TestNew_WithAscValues_PoppedValuesAreCorrect(t *testing.T) {
 
 func TestPush_WithDescValues_ElementsAreCorrect(t *testing.T) {
 	cap := 5
-	asc := false
 
-	monostack, _ := New[int](cap, asc)
+	monostack, _ := New[int](cap, Decreasing)
 
 	monostack.Push(kv3)
 	monostack.Push(kv2)
@@ -117,9 +108,8 @@ func TestPush_WithDescValues_ElementsAreCorrect(t *testing.T) {
 
 func TestPush_WithDescValues_PoppedValuesAreCorrect(t *testing.T) {
 	cap := 5
-	asc := false
 
-	monostack, _ := New[int](cap, asc)
+	monostack, _ := New[int](cap, Decreasing)
 
 	popped := make([]collections.KeyValue[int], 0)
 
@@ -135,9 +125,8 @@ func TestPush_WithDescValues_PoppedValuesAreCorrect(t *testing.T) {
 
 func TestPush_WithAscValues_ElementsAreCorrect(t *testing.T) {
 	cap := 5
-	asc := true
 
-	monostack, _ := New[int](cap, asc)
+	monostack, _ := New[int](cap, Increasing)
 
 	monostack.Push(kv2)
 	monostack.Push(kv4)
@@ -151,9 +140,8 @@ func TestPush_WithAscValues_ElementsAreCorrect(t *testing.T) {
 
 func TestPush_WithAscValues_PoppedValuesAreCorrect(t *testing.T) {
 	cap := 5
-	asc := true
 
-	monostack, _ := New[int](cap, asc)
+	monostack, _ := New[int](cap, Increasing)
 
 	popped := make([]collections.KeyValue[int], 0)
 
@@ -169,9 +157,8 @@ func TestPush_WithAscValues_PoppedValuesAreCorrect(t *testing.T) {
 
 func TestPop_WithValues_PoppedValueIsCorrect(t *testing.T) {
 	cap := 3
-	asc := false
 
-	monostack, _ := New(cap, asc, kv5, kv4, kv3)
+	monostack, _ := New(cap, Decreasing, kv5, kv4, kv3)
 
 	actual := monostack.Pop()
 
@@ -180,9 +167,8 @@ func TestPop_WithValues_PoppedValueIsCorrect(t *testing.T) {
 
 func TestPop_WithValues_ElementsAreCorrect(t *testing.T) {
 	cap := 3
-	asc := false
 
-	monostack, _ := New(cap, asc, kv5, kv4, kv3)
+	monostack, _ := New(cap, Decreasing, kv5, kv4, kv3)
 
 	monostack.Pop()
 
@@ -204,9 +190,8 @@ func TestPop_WithZeroElements_Panics(t *testing.T) {
 
 func TestPeek_WithValues_PeekedValueIsCorrect(t *testing.T) {
 	cap := 3
-	asc := false
 
-	monostack, _ := New(cap, asc, kv5, kv4, kv3)
+	monostack, _ := New(cap, Decreasing, kv5, kv4, kv3)
 
 	actual := monostack.Peek()
 
@@ -215,9 +200,8 @@ func TestPeek_WithValues_PeekedValueIsCorrect(t *testing.T) {
 
 func TestPeek_WithValues_ElementsAreCorrect(t *testing.T) {
 	cap := 3
-	asc := false
 
-	monostack, _ := New(cap, asc, kv5, kv4, kv3)
+	monostack, _ := New(cap, Decreasing, kv5, kv4, kv3)
 
 	monostack.Peek()
 
@@ -240,27 +224,24 @@ func TestPeek_WithZeroElements_Panics(t *testing.T) {
 
 func TestIsEmpty_WithElements_IsFalse(t *testing.T) {
 	cap := 1
-	asc := false
 
-	monostack, _ := New(cap, asc, kv1)
+	monostack, _ := New(cap, Decreasing, kv1)
 
 	assert.False(t, monostack.IsEmpty())
 }
 
 func TestIsEmpty_WithNoElements_IsTrue(t *testing.T) {
 	cap := 1
-	asc := false
 
-	monostack, _ := New[int](cap, asc)
+	monostack, _ := New[int](cap, Decreasing)
 
 	assert.True(t, monostack.IsEmpty())
 }
 
 func TestClear_WithElements_CountIsZero(t *testing.T) {
 	cap := 3
-	asc := false
 
-	monostack, _ := New(cap, asc, kv3, kv2, kv1)
+	monostack, _ := New(cap, Decreasing, kv3, kv2, kv1)
 
 	monostack.Clear()
 
@@ -269,9 +250,8 @@ func TestClear_WithElements_CountIsZero(t *testing.T) {
 
 func TestClear_WithElements_CapacityIsSame(t *testing.T) {
 	cap := 3
-	asc := false
 
-	monostack, _ := New(cap, asc, kv3, kv2, kv1)
+	monostack, _ := New(cap, Decreasing, kv3, kv2, kv1)
 
 	monostack.Clear()
 

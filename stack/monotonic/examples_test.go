@@ -9,9 +9,8 @@ import (
 func Example() {
 	// The initial capacity, if you have it (zero also works)
 	capacity := 3
-	ascending := false
 
-	monostack, _ := New[int](capacity, ascending) // This stack is always decreasing
+	monostack, _ := New[int](capacity, Decreasing) // This stack is always decreasing
 
 	kv1 := collections.KeyValue[int]{Key: 3, Value: 3}
 	kv2 := collections.KeyValue[int]{Key: 1, Value: 1}
