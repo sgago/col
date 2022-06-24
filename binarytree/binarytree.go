@@ -15,8 +15,8 @@ func (n *node[T]) isLeaf() bool {
 	return n.left == nil && n.right == nil
 }
 
-func New[T any](key int, value T) node[T] {
-	return node[T]{KeyValue: collections.KeyValue[T]{Key: key, Value: value}}
+func New[T any](key int, value T) *node[T] {
+	return &node[T]{KeyValue: collections.KeyValue[T]{Key: key, Value: value}}
 }
 
 func (n *node[T]) Insert(key int, value T) {

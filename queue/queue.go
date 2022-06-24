@@ -23,12 +23,12 @@ type queue[T any] struct {
 // appear in the front of the stack.
 // The last value, values[len(values)-1], will be enqueued last and appear
 // at the back of the queue.
-func New[T any](capacity int, values ...T) queue[T] {
+func New[T any](capacity int, values ...T) *queue[T] {
 	q := queue[T]{elements: make([]T, 0, capacity)}
 
 	q.EnqueueMany(values...)
 
-	return q
+	return &q
 }
 
 // Enqueue adds a value to the back of the stack.

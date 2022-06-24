@@ -9,14 +9,14 @@ type minheap[T any] struct {
 	items []collections.KeyValue[T]
 }
 
-func New[T any](capacity int, values ...collections.KeyValue[T]) minheap[T] {
+func New[T any](capacity int, values ...collections.KeyValue[T]) *minheap[T] {
 	heap := minheap[T]{items: make([]collections.KeyValue[T], 0, capacity)}
 
 	for _, value := range values {
 		heap.Push(value.Key, value.Value)
 	}
 
-	return heap
+	return &heap
 }
 
 func (heap *minheap[T]) Push(key int, value T) {

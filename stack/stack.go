@@ -22,12 +22,12 @@ type stack[T any] struct {
 // In other wrods, the first value, values[0], will be pushed first.
 // The last value, values[len(values)-1] will be pushed last and appear
 // on top of the stack.
-func New[T any](capacity int, values ...T) stack[T] {
+func New[T any](capacity int, values ...T) *stack[T] {
 	s := stack[T]{elements: make([]T, 0, capacity)}
 
 	s.PushMany(values...)
 
-	return s
+	return &s
 }
 
 // Push adds a value to the top of the stack.
