@@ -1,6 +1,12 @@
 package slice
 
-import "github.com/sgago/collections/err"
+import (
+	"sync"
+
+	"github.com/sgago/collections/err"
+)
+
+const notFound int = -1
 
 func First[T any](slice []T) T {
 	return slice[0]
@@ -28,16 +34,6 @@ func Swap[T any](slice []T, indexA int, indexB int) []T {
 	slice[indexB] = temp
 
 	return slice
-}
-
-func IndexOf[T comparable](slice []T, value T) (int, error) {
-	for index, val := range slice {
-		if value == val {
-			return index, nil
-		}
-	}
-
-	return -1, &err.NotFound{}
 }
 
 func Contains[T comparable](slice []T, value T) bool {
@@ -72,4 +68,68 @@ func All[T any](slice []T, predicate func(index int, value T) bool) bool {
 	}
 
 	return true
+}
+
+var indexOfWg sync.WaitGroup
+
+func indexOf[T comparable](slice []T, value T) (int, error) {
+	for index, val := range slice {
+		if value == val {
+			return index, nil
+		}
+	}
+
+	return notFound, &err.NotFound{}
+}
+
+func IndexOf[T comparable](slice []T, value T) (int, error) {
+	max := 10_000
+
+	workers := len(slice) / max
+
+	if workers == 0 {
+		return indexOf(slice, value)
+	}
+
+	indexes := make(chan int, workers)
+
+	for i := 0; i < workers; i++ {
+		indexOfWg.Add(1)
+
+		worker := i
+		start := i * max
+		end := len(slice)
+
+		if i < workers-1 {
+			end = start + max
+		}
+
+		go func(w int, s []T, result chan<- int) {
+			defer indexOfWg.Done()
+			index, e := indexOf(s, value)
+
+			if e == nil {
+				result <- index + w*max
+			} else {
+				result <- notFound
+			}
+		}(worker, slice[start:end], indexes)
+	}
+
+	indexOfWg.Wait()
+	close(indexes)
+
+	result := notFound
+
+	for index := range indexes {
+		if index != notFound && (result == notFound || index < result) {
+			result = index
+		}
+	}
+
+	if result != notFound {
+		return result, nil
+	}
+
+	return notFound, &err.NotFound{}
 }

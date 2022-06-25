@@ -60,7 +60,7 @@ func TestIndexOf_ValueDoesNotExist_ReturnedIndexNegative1(t *testing.T) {
 	s := make([]int, 0, 5)
 	s = append(s, 1, 2, 3, 4, 5)
 
-	actual, _ := IndexOf(s, 6)
+	actual, _ := indexOf(s, 6)
 
 	assert.Equal(t, -1, actual)
 }
@@ -69,7 +69,7 @@ func TestIndexOf_ValueDoesNotExist_ReturnsError(t *testing.T) {
 	s := make([]int, 0, 5)
 	s = append(s, 1, 2, 3, 4, 5)
 
-	_, e := IndexOf(s, 6)
+	_, e := indexOf(s, 6)
 
 	assert.NotNil(t, e)
 }
@@ -78,7 +78,7 @@ func TestIndexOf_ValueExists_ReturnsIndex(t *testing.T) {
 	s := make([]int, 0, 5)
 	s = append(s, 1, 2, 3, 4, 5)
 
-	actual, _ := IndexOf(s, 4)
+	actual, _ := indexOf(s, 4)
 
 	assert.Equal(t, 3, actual)
 }
@@ -87,7 +87,7 @@ func TestIndexOf_ValueExists_ReturnsNilError(t *testing.T) {
 	s := make([]int, 0, 5)
 	s = append(s, 1, 2, 3, 4, 5)
 
-	_, e := IndexOf(s, 4)
+	_, e := indexOf(s, 4)
 
 	assert.Nil(t, e)
 }
@@ -220,4 +220,18 @@ func TestAll_WithNilPredicate_Panics(t *testing.T) {
 	values[2] = false
 
 	assert.Panics(t, func() { All(values, nil) })
+}
+
+func TestIndexOfC(t *testing.T) {
+	count := 30_000
+
+	values := make([]int, 0, count)
+
+	for i := 0; i < count; i++ {
+		values = append(values, i)
+	}
+
+	i, _ := IndexOf(values, 29_999)
+
+	assert.Equal(t, i, count-1)
 }
