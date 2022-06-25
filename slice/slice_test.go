@@ -179,3 +179,45 @@ func TestAny_WithNilPredicateAndSliceHasNoElements_ReturnsTrue(t *testing.T) {
 
 	assert.False(t, actual)
 }
+
+func TestAll_WithPredicateAlwaysReturningTrue_ReturnsTrue(t *testing.T) {
+	values := make([]bool, 3)
+
+	values[0] = true
+	values[1] = true
+	values[2] = true
+
+	predicate := func(index int, value bool) bool {
+		return value
+	}
+
+	actual := All(values, predicate)
+
+	assert.True(t, actual)
+}
+
+func TestAll_WithPredicateReturningFalse_ReturnsFalse(t *testing.T) {
+	values := make([]bool, 3)
+
+	values[0] = true
+	values[1] = true
+	values[2] = false
+
+	predicate := func(index int, value bool) bool {
+		return value
+	}
+
+	actual := All(values, predicate)
+
+	assert.False(t, actual)
+}
+
+func TestAll_WithNilPredicate_Panics(t *testing.T) {
+	values := make([]bool, 3)
+
+	values[0] = false
+	values[1] = false
+	values[2] = false
+
+	assert.Panics(t, func() { All(values, nil) })
+}

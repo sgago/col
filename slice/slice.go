@@ -59,3 +59,17 @@ func Any[T any](slice []T, predicate func(index int, value T) bool) bool {
 
 	return false
 }
+
+func All[T any](slice []T, predicate func(index int, value T) bool) bool {
+	if predicate == nil {
+		panic("The predicate cannot be nil.")
+	}
+
+	for index, value := range slice {
+		if !predicate(index, value) {
+			return false
+		}
+	}
+
+	return true
+}
