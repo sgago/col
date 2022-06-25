@@ -127,3 +127,55 @@ func TestClearCapacityRemains(t *testing.T) {
 
 	assert.Equal(t, cap(clear), 5)
 }
+
+func TestAny_WithPredicateReturningTrue_ReturnsTrue(t *testing.T) {
+	values := make([]bool, 3)
+
+	values[0] = false
+	values[1] = false
+	values[2] = true
+
+	predicate := func(index int, value bool) bool {
+		return value
+	}
+
+	actual := Any(values, predicate)
+
+	assert.True(t, actual)
+}
+
+func TestAny_WithPredicateReturningFalse_ReturnsFalse(t *testing.T) {
+	values := make([]bool, 3)
+
+	values[0] = false
+	values[1] = false
+	values[2] = false
+
+	predicate := func(index int, value bool) bool {
+		return value
+	}
+
+	actual := Any(values, predicate)
+
+	assert.False(t, actual)
+}
+
+func TestAny_WithNilPredicateAndSliceHasElements_ReturnsTrue(t *testing.T) {
+	values := make([]bool, 3)
+
+	values[0] = false
+	values[1] = false
+	values[2] = false
+
+	actual := Any(values, nil)
+
+	assert.True(t, actual)
+}
+
+func TestAny_WithNilPredicateAndSliceHasNoElements_ReturnsTrue(t *testing.T) {
+	values := make([]bool, 0)
+
+	actual := Any(values, nil)
+
+	assert.False(t, actual)
+}

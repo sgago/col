@@ -45,3 +45,17 @@ func Contains[T comparable](slice []T, value T) bool {
 
 	return e == nil
 }
+
+func Any[T any](slice []T, predicate func(index int, value T) bool) bool {
+	if predicate == nil {
+		return len(slice) > 0
+	}
+
+	for index, value := range slice {
+		if predicate(index, value) {
+			return true
+		}
+	}
+
+	return false
+}
