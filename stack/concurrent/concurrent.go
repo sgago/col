@@ -67,7 +67,7 @@ func (s *concstack[T]) Pop() T {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	last := slice.Last(s.elements)
+	last, _ := slice.Last(s.elements, nil)
 
 	s.elements = slice.RemoveLast(s.elements)
 

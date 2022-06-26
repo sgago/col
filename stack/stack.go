@@ -56,7 +56,7 @@ func (s *stack[T]) Pop() T {
 		panic("The stack is empty.")
 	}
 
-	last := slice.Last(s.elements)
+	last, _ := slice.Last(s.elements, nil)
 
 	s.elements = slice.RemoveLast(s.elements)
 

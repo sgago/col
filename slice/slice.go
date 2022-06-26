@@ -8,12 +8,44 @@ import (
 
 const notFound int = -1
 
-func First[T any](slice []T) T {
-	return slice[0]
+func First[T any](slice []T, predicate func(index int, value T) bool) (T, error) {
+	if len(slice) == 0 {
+		panic("The slice is empty.")
+	}
+
+	if predicate == nil {
+		return slice[0], nil
+	}
+
+	for index, value := range slice {
+		if predicate(index, value) {
+			return value, nil
+		}
+	}
+
+	var notFoundValue T
+
+	return notFoundValue, &err.NotFound{}
 }
 
-func Last[T any](slice []T) T {
-	return slice[len(slice)-1]
+func Last[T any](slice []T, predicate func(index int, value T) bool) (T, error) {
+	if len(slice) == 0 {
+		panic("The slice is empty.")
+	}
+
+	if predicate == nil {
+		return slice[len(slice)-1], nil
+	}
+
+	for index, value := range slice {
+		if predicate(index, value) {
+			return value, nil
+		}
+	}
+
+	var notFoundValue T
+
+	return notFoundValue, &err.NotFound{}
 }
 
 func Clear[T any](slice []T) []T {
@@ -72,7 +104,7 @@ func All[T any](slice []T, predicate func(index int, value T) bool) bool {
 
 var indexOfWg sync.WaitGroup
 
-func indexOf[T comparable](slice []T, value T) (int, error) {
+func indexOfWorker[T comparable](slice []T, value T) (int, error) {
 	for index, val := range slice {
 		if value == val {
 			return index, nil
@@ -88,7 +120,7 @@ func IndexOf[T comparable](slice []T, value T) (int, error) {
 	workers := len(slice) / max
 
 	if workers == 0 {
-		return indexOf(slice, value)
+		return indexOfWorker(slice, value)
 	}
 
 	indexes := make(chan int, workers)
@@ -105,7 +137,7 @@ func IndexOf[T comparable](slice []T, value T) (int, error) {
 
 		go func(w int, s []T, result chan<- int) {
 			defer indexOfWg.Done()
-			index, e := indexOf(s, value)
+			index, e := indexOfWorker(s, value)
 
 			if e == nil {
 				result <- index + w*max

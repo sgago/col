@@ -56,7 +56,7 @@ func (q *queue[T]) Dequeue() T {
 		panic("The queue is empty.")
 	}
 
-	first := slice.First(q.elements)
+	first, _ := slice.First(q.elements, nil)
 
 	q.elements = slice.RemoveFirst(q.elements)
 

@@ -2,7 +2,7 @@ package slice
 
 import "testing"
 
-func BenchmarkIndexOf(b *testing.B) {
+func BenchmarkIndexOfWorker(b *testing.B) {
 
 	values := make([]int, b.N)
 
@@ -11,7 +11,7 @@ func BenchmarkIndexOf(b *testing.B) {
 	}
 
 	for i := 0; i < b.N; i++ {
-		indexOf(values, b.N-1)
+		indexOfWorker(values, b.N-1)
 	}
 }
 
