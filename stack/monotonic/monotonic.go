@@ -43,7 +43,7 @@ type monostack[T any] struct {
 // In other wrods, the first value, values[0], will be pushed first.
 // The last value, values[len(values)-1] will be pushed last and appear
 // on top of the stack.
-func New[T any](capacity int, order Order, kvs ...collections.KeyValue[T]) (*monostack[T], []collections.KeyValue[T]) {
+func New[T any](order Order, capacity int, kvs ...collections.KeyValue[T]) (*monostack[T], []collections.KeyValue[T]) {
 	s := monostack[T]{
 		order:    order,
 		elements: make([]collections.KeyValue[T], 0, capacity),
