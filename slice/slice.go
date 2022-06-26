@@ -96,7 +96,6 @@ func IndexOf[T comparable](slice []T, value T) (int, error) {
 	for i := 0; i < workers; i++ {
 		indexOfWg.Add(1)
 
-		worker := i
 		start := i * max
 		end := len(slice)
 
@@ -113,7 +112,7 @@ func IndexOf[T comparable](slice []T, value T) (int, error) {
 			} else {
 				result <- notFound
 			}
-		}(worker, slice[start:end], indexes)
+		}(i, slice[start:end], indexes)
 	}
 
 	indexOfWg.Wait()
