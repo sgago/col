@@ -12,9 +12,9 @@ func Example() {
 
 	monostack, _ := New[int](Decreasing, capacity) // This stack is always decreasing
 
-	kv1 := col.KV[int]{Key: 3, Val: 3}
-	kv2 := col.KV[int]{Key: 1, Val: 1}
-	kv3 := col.KV[int]{Key: 6, Val: 6}
+	kv1 := col.KV[int, int]{Key: 3, Val: 3}
+	kv2 := col.KV[int, int]{Key: 1, Val: 1}
+	kv3 := col.KV[int, int]{Key: 6, Val: 6}
 
 	monostack.Push(kv1) // Stack: 3
 
