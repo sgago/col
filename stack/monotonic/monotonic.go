@@ -31,8 +31,8 @@ const (
 
 // An unbounded, slice-backed monotonic stack data structure with type T elements.
 type monostack[T any] struct {
-	order    Order
-	elements []col.KV[int, T]
+	order Order
+	elems []col.PV[T]
 }
 
 // Allocates and initializes a new monotonic stack with type T elements.
@@ -43,49 +43,49 @@ type monostack[T any] struct {
 // In other wrods, the first value, values[0], will be pushed first.
 // The last value, values[len(values)-1] will be pushed last and appear
 // on top of the stack.
-func New[T any](order Order, capacity int, kvs ...col.KV[int, T]) (*monostack[T], []col.KV[int, T]) {
+func New[T any](order Order, cap int, vals ...col.PV[T]) (*monostack[T], []col.PV[T]) {
 	s := monostack[T]{
-		order:    order,
-		elements: make([]col.KV[int, T], 0, capacity),
+		order: order,
+		elems: make([]col.PV[T], 0, cap),
 	}
 
-	popped := s.PushMany(kvs...)
+	popped := s.PushMany(vals...)
 
 	return &s, popped
 }
 
 // Push adds a value to the top of the stack.
 // Elements that would break the monotonic condition are returned to the caller.
-func (s *monostack[T]) Push(kv col.KV[int, T]) []col.KV[int, T] {
+func (s *monostack[T]) Push(pv col.PV[T]) []col.PV[T] {
 	if s.order {
-		return s.pushAsc(kv)
+		return s.pushAsc(pv)
 	}
 
-	return s.pushDesc(kv)
+	return s.pushDesc(pv)
 }
 
-func (s *monostack[T]) pushAsc(kv col.KV[int, T]) []col.KV[int, T] {
+func (s *monostack[T]) pushAsc(pv col.PV[T]) []col.PV[T] {
 
-	popped := make([]col.KV[int, T], 0)
+	popped := make([]col.PV[T], 0)
 
-	for !s.IsEmpty() && s.Peek().Key > kv.Key {
+	for !s.IsEmpty() && s.Peek().Priority > pv.Priority {
 		popped = append(popped, s.Pop())
 	}
 
-	s.elements = append(s.elements, kv)
+	s.elems = append(s.elems, pv)
 
 	return popped
 }
 
-func (s *monostack[T]) pushDesc(kv col.KV[int, T]) []col.KV[int, T] {
+func (s *monostack[T]) pushDesc(pv col.PV[T]) []col.PV[T] {
 
-	popped := make([]col.KV[int, T], 0)
+	popped := make([]col.PV[T], 0)
 
-	for !s.IsEmpty() && s.Peek().Key < kv.Key {
+	for !s.IsEmpty() && s.Peek().Priority < pv.Priority {
 		popped = append(popped, s.Pop())
 	}
 
-	s.elements = append(s.elements, kv)
+	s.elems = append(s.elems, pv)
 
 	return popped
 }
@@ -98,12 +98,12 @@ func (s *monostack[T]) pushDesc(kv col.KV[int, T]) []col.KV[int, T] {
 // The last value, values[len(values)-1] will be pushed last and appear on top of the stack.
 //
 // If no values are supplied, then nothing will be pushed.
-func (s *monostack[T]) PushMany(values ...col.KV[int, T]) []col.KV[int, T] {
+func (s *monostack[T]) PushMany(pvs ...col.PV[T]) []col.PV[T] {
 
-	popped := make([]col.KV[int, T], 0)
+	popped := make([]col.PV[T], 0)
 
-	if len(values) != 0 {
-		for _, value := range values {
+	if len(pvs) != 0 {
+		for _, value := range pvs {
 			popped = append(popped, s.Push(value)...)
 		}
 	}
@@ -114,14 +114,14 @@ func (s *monostack[T]) PushMany(values ...col.KV[int, T]) []col.KV[int, T] {
 // Pop removes and returns the top element of the monotonic stack.
 //
 // This method panics if the stack is empty.
-func (s *monostack[T]) Pop() col.KV[int, T] {
-	if s.elements == nil || len(s.elements) == 0 {
+func (s *monostack[T]) Pop() col.PV[T] {
+	if s.elems == nil || len(s.elems) == 0 {
 		panic("The stack is empty.")
 	}
 
-	last, _ := slice.Last(s.elements, nil)
+	last, _ := slice.Last(s.elems, nil)
 
-	s.elements = slice.RemoveLast(s.elements)
+	s.elems = slice.RemoveLast(s.elems)
 
 	return last
 }
@@ -129,22 +129,22 @@ func (s *monostack[T]) Pop() col.KV[int, T] {
 // Pop returns the top element of the monotonic stack.
 //
 // This method panics if the monotonic stack is empty.
-func (s *monostack[T]) Peek() col.KV[int, T] {
-	if s.elements == nil || len(s.elements) == 0 {
+func (s *monostack[T]) Peek() col.PV[T] {
+	if s.elems == nil || len(s.elems) == 0 {
 		panic("The stack is empty.")
 	}
 
-	return s.elements[len(s.elements)-1]
+	return s.elems[len(s.elems)-1]
 }
 
 // Count returns the number of elements in the monotonic stack.
 func (s *monostack[T]) Count() int {
-	return len(s.elements)
+	return len(s.elems)
 }
 
 // Capacity returns the capacity of the monotonic stack.
 func (s *monostack[T]) Capacity() int {
-	return cap(s.elements)
+	return cap(s.elems)
 }
 
 // IsEmpty returns true if the monotonic stack has no elements;
@@ -156,5 +156,5 @@ func (s *monostack[T]) IsEmpty() bool {
 // Clear removes all elements from the monotonic stack.
 // It maintains the stack's existing capacity.
 func (s *monostack[T]) Clear() {
-	s.elements = slice.Clear(s.elements)
+	s.elems = slice.Clear(s.elems)
 }

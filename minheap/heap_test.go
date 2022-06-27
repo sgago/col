@@ -7,50 +7,55 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+var pv1 col.PV[int] = col.PV[int]{Priority: 1, Val: 1}
+var pv2 col.PV[int] = col.PV[int]{Priority: 2, Val: 2}
+var pv3 col.PV[int] = col.PV[int]{Priority: 3, Val: 3}
+var pv4 col.PV[int] = col.PV[int]{Priority: 4, Val: 4}
+
 func TestPush_WithMinHeap_ElementsCorrect(t *testing.T) {
 	h := New[int](Min, 4)
 
-	h.Push(3, 3)
-	h.Push(2, 2)
-	h.Push(1, 1)
-	h.Push(4, 4)
+	h.Push(pv3)
+	h.Push(pv2)
+	h.Push(pv1)
+	h.Push(pv4)
 
 	assert.Equal(t, 4, len(h.elems))
-	assert.Equal(t, 1, h.elems[0].Key)
-	assert.Equal(t, 3, h.elems[1].Key)
-	assert.Equal(t, 2, h.elems[2].Key)
-	assert.Equal(t, 4, h.elems[3].Key)
+	assert.Equal(t, 1, h.elems[0].Priority)
+	assert.Equal(t, 3, h.elems[1].Priority)
+	assert.Equal(t, 2, h.elems[2].Priority)
+	assert.Equal(t, 4, h.elems[3].Priority)
 }
 
 func TestPush_WithMaxHeap_ElementsCorrect(t *testing.T) {
 	h := New[int](Max, 4)
 
-	h.Push(3, 3)
-	h.Push(2, 2)
-	h.Push(1, 1)
-	h.Push(4, 4)
+	h.Push(pv3)
+	h.Push(pv2)
+	h.Push(pv1)
+	h.Push(pv4)
 
 	assert.Equal(t, 4, len(h.elems))
-	assert.Equal(t, 4, h.elems[0].Key)
-	assert.Equal(t, 3, h.elems[1].Key)
-	assert.Equal(t, 1, h.elems[2].Key)
-	assert.Equal(t, 2, h.elems[3].Key)
+	assert.Equal(t, 4, h.elems[0].Priority)
+	assert.Equal(t, 3, h.elems[1].Priority)
+	assert.Equal(t, 1, h.elems[2].Priority)
+	assert.Equal(t, 2, h.elems[3].Priority)
 }
 
 func TestPop_WithMinHeap_ElementsCorrect(t *testing.T) {
 	h := New[int](Min, 4)
 
-	h.Push(3, 3)
-	h.Push(2, 2)
-	h.Push(1, 1)
-	h.Push(4, 4)
+	h.Push(pv3)
+	h.Push(pv2)
+	h.Push(pv1)
+	h.Push(pv4)
 
 	values := make([]int, 0, 4)
 
-	values = append(values, h.Pop().Key)
-	values = append(values, h.Pop().Key)
-	values = append(values, h.Pop().Key)
-	values = append(values, h.Pop().Key)
+	values = append(values, h.Pop().Priority)
+	values = append(values, h.Pop().Priority)
+	values = append(values, h.Pop().Priority)
+	values = append(values, h.Pop().Priority)
 
 	assert.Equal(t, 4, len(values))
 	assert.Equal(t, 1, values[0])
@@ -62,17 +67,17 @@ func TestPop_WithMinHeap_ElementsCorrect(t *testing.T) {
 func TestPop_WithMaxHeap_ElementsCorrect(t *testing.T) {
 	h := New[int](Max, 4)
 
-	h.Push(3, 3)
-	h.Push(2, 2)
-	h.Push(1, 1)
-	h.Push(4, 4)
+	h.Push(pv3)
+	h.Push(pv2)
+	h.Push(pv1)
+	h.Push(pv4)
 
 	values := make([]int, 0, 4)
 
-	values = append(values, h.Pop().Key)
-	values = append(values, h.Pop().Key)
-	values = append(values, h.Pop().Key)
-	values = append(values, h.Pop().Key)
+	values = append(values, h.Pop().Priority)
+	values = append(values, h.Pop().Priority)
+	values = append(values, h.Pop().Priority)
+	values = append(values, h.Pop().Priority)
 
 	assert.Equal(t, 4, len(values))
 	assert.Equal(t, 4, values[0])
@@ -84,12 +89,12 @@ func TestPop_WithMaxHeap_ElementsCorrect(t *testing.T) {
 func TestPeek_WithMinHeap_IsCorrect(t *testing.T) {
 	h := New[int](Min, 4)
 
-	h.Push(3, 3)
-	h.Push(2, 2)
-	h.Push(1, 1)
-	h.Push(4, 4)
+	h.Push(pv3)
+	h.Push(pv2)
+	h.Push(pv1)
+	h.Push(pv4)
 
-	actual := h.Peek().Key
+	actual := h.Peek().Priority
 
 	assert.Equal(t, 1, actual)
 }
@@ -97,12 +102,12 @@ func TestPeek_WithMinHeap_IsCorrect(t *testing.T) {
 func TestPeek_WithMaxHeap_IsCorrect(t *testing.T) {
 	h := New[int](Max, 4)
 
-	h.Push(3, 3)
-	h.Push(2, 2)
-	h.Push(1, 1)
-	h.Push(4, 4)
+	h.Push(pv3)
+	h.Push(pv2)
+	h.Push(pv1)
+	h.Push(pv4)
 
-	actual := h.Peek().Key
+	actual := h.Peek().Priority
 
 	assert.Equal(t, 4, actual)
 }
@@ -110,9 +115,9 @@ func TestPeek_WithMaxHeap_IsCorrect(t *testing.T) {
 func TestIsEmpty_WithElements_IsFalse(t *testing.T) {
 	cap := 1
 
-	h := New(Min, cap, col.KV[int]{
-		Key: 1,
-		Val: 1,
+	h := New(Min, cap, col.PV[int]{
+		Priority: 1,
+		Val:      1,
 	})
 
 	assert.False(t, h.IsEmpty())
@@ -129,10 +134,7 @@ func TestIsEmpty_WithNoElements_IsTrue(t *testing.T) {
 func TestClear_WithElements_CountIsCorrect(t *testing.T) {
 	cap := 1
 
-	h := New(Min, cap, col.KV[int]{
-		Key: 1,
-		Val: 1,
-	})
+	h := New(Min, cap, pv1)
 
 	h.Clear()
 
@@ -142,10 +144,7 @@ func TestClear_WithElements_CountIsCorrect(t *testing.T) {
 func TestClear_WithElements_CapacityIsSame(t *testing.T) {
 	cap := 1
 
-	h := New(Min, cap, col.KV[int]{
-		Key: 1,
-		Val: 1,
-	})
+	h := New(Min, cap, pv1)
 
 	h.Clear()
 

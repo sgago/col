@@ -7,11 +7,11 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var kv1 col.KV[int, int] = col.KV[int, int]{Key: 1, Val: 1}
-var kv2 col.KV[int, int] = col.KV[int, int]{Key: 2, Val: 2}
-var kv3 col.KV[int, int] = col.KV[int, int]{Key: 3, Val: 3}
-var kv4 col.KV[int, int] = col.KV[int, int]{Key: 4, Val: 4}
-var kv5 col.KV[int, int] = col.KV[int, int]{Key: 5, Val: 5}
+var kv1 col.PV[int] = col.PV[int]{Priority: 1, Val: 1}
+var kv2 col.PV[int] = col.PV[int]{Priority: 2, Val: 2}
+var kv3 col.PV[int] = col.PV[int]{Priority: 3, Val: 3}
+var kv4 col.PV[int] = col.PV[int]{Priority: 4, Val: 4}
+var kv5 col.PV[int] = col.PV[int]{Priority: 5, Val: 5}
 
 // TODO: Needs tests for when we add the the same value over and over again.
 
@@ -32,7 +32,7 @@ func TestNew_WithNoValues_CapacityIsCorrect(t *testing.T) {
 }
 
 func TestNew_WithDescValues_ElementsAreCorrect(t *testing.T) {
-	values := []col.KV[int, int]{
+	values := []col.PV[int]{
 		kv4,
 		kv1,
 		kv3,
@@ -42,13 +42,13 @@ func TestNew_WithDescValues_ElementsAreCorrect(t *testing.T) {
 	monostack, _ := New(Decreasing, len(values), values...)
 
 	assert.Equal(t, 3, monostack.Count())
-	assert.Equal(t, kv4, monostack.elements[0])
-	assert.Equal(t, kv3, monostack.elements[1])
-	assert.Equal(t, kv2, monostack.elements[2])
+	assert.Equal(t, kv4, monostack.elems[0])
+	assert.Equal(t, kv3, monostack.elems[1])
+	assert.Equal(t, kv2, monostack.elems[2])
 }
 
 func TestNew_WithAscValues_ElementsAreCorrect(t *testing.T) {
-	values := []col.KV[int, int]{
+	values := []col.PV[int]{
 		kv4,
 		kv1,
 		kv3,
@@ -58,12 +58,12 @@ func TestNew_WithAscValues_ElementsAreCorrect(t *testing.T) {
 	monostack, _ := New(Increasing, len(values), values...)
 
 	assert.Equal(t, 2, monostack.Count())
-	assert.Equal(t, kv1, monostack.elements[0])
-	assert.Equal(t, kv2, monostack.elements[1])
+	assert.Equal(t, kv1, monostack.elems[0])
+	assert.Equal(t, kv2, monostack.elems[1])
 }
 
 func TestNew_WithDescValues_PoppedValuesAreCorrect(t *testing.T) {
-	values := []col.KV[int, int]{
+	values := []col.PV[int]{
 		kv4,
 		kv1,
 		kv3,
@@ -77,7 +77,7 @@ func TestNew_WithDescValues_PoppedValuesAreCorrect(t *testing.T) {
 }
 
 func TestNew_WithAscValues_PoppedValuesAreCorrect(t *testing.T) {
-	values := []col.KV[int, int]{
+	values := []col.PV[int]{
 		kv4,
 		kv1,
 		kv3,
@@ -102,8 +102,8 @@ func TestPush_WithDescValues_ElementsAreCorrect(t *testing.T) {
 	monostack.Push(kv1)
 
 	assert.Equal(t, 2, monostack.Count())
-	assert.Equal(t, kv4, monostack.elements[0])
-	assert.Equal(t, kv1, monostack.elements[1])
+	assert.Equal(t, kv4, monostack.elems[0])
+	assert.Equal(t, kv1, monostack.elems[1])
 }
 
 func TestPush_WithDescValues_PoppedValuesAreCorrect(t *testing.T) {
@@ -111,7 +111,7 @@ func TestPush_WithDescValues_PoppedValuesAreCorrect(t *testing.T) {
 
 	monostack, _ := New[int](Decreasing, cap)
 
-	popped := make([]col.KV[int, int], 0)
+	popped := make([]col.PV[int], 0)
 
 	popped = append(popped, monostack.Push(kv3)...)
 	popped = append(popped, monostack.Push(kv2)...)
@@ -134,8 +134,8 @@ func TestPush_WithAscValues_ElementsAreCorrect(t *testing.T) {
 	monostack.Push(kv3)
 
 	assert.Equal(t, 2, monostack.Count())
-	assert.Equal(t, kv1, monostack.elements[0])
-	assert.Equal(t, kv3, monostack.elements[1])
+	assert.Equal(t, kv1, monostack.elems[0])
+	assert.Equal(t, kv3, monostack.elems[1])
 }
 
 func TestPush_WithAscValues_PoppedValuesAreCorrect(t *testing.T) {
@@ -143,7 +143,7 @@ func TestPush_WithAscValues_PoppedValuesAreCorrect(t *testing.T) {
 
 	monostack, _ := New[int](Increasing, cap)
 
-	popped := make([]col.KV[int, int], 0)
+	popped := make([]col.PV[int], 0)
 
 	popped = append(popped, monostack.Push(kv2)...)
 	popped = append(popped, monostack.Push(kv4)...)
@@ -172,8 +172,8 @@ func TestPop_WithValues_ElementsAreCorrect(t *testing.T) {
 
 	monostack.Pop()
 
-	assert.Equal(t, kv5, monostack.elements[0])
-	assert.Equal(t, kv4, monostack.elements[1])
+	assert.Equal(t, kv5, monostack.elems[0])
+	assert.Equal(t, kv4, monostack.elems[1])
 }
 
 func TestPop_WithNilElements_Panics(t *testing.T) {
@@ -183,7 +183,7 @@ func TestPop_WithNilElements_Panics(t *testing.T) {
 }
 
 func TestPop_WithZeroElements_Panics(t *testing.T) {
-	stack := monostack[int]{elements: make([]col.KV[int, int], 0)}
+	stack := monostack[int]{elems: make([]col.PV[int], 0)}
 
 	assert.Panics(t, func() { stack.Pop() })
 }
@@ -205,9 +205,9 @@ func TestPeek_WithValues_ElementsAreCorrect(t *testing.T) {
 
 	monostack.Peek()
 
-	assert.Equal(t, monostack.elements[0], kv5)
-	assert.Equal(t, monostack.elements[1], kv4)
-	assert.Equal(t, monostack.elements[2], kv3)
+	assert.Equal(t, monostack.elems[0], kv5)
+	assert.Equal(t, monostack.elems[1], kv4)
+	assert.Equal(t, monostack.elems[2], kv3)
 }
 
 func TestPeek_WithNilElements_Panics(t *testing.T) {
@@ -217,7 +217,7 @@ func TestPeek_WithNilElements_Panics(t *testing.T) {
 }
 
 func TestPeek_WithZeroElements_Panics(t *testing.T) {
-	stack := monostack[int]{elements: make([]col.KV[int, int], 0)}
+	stack := monostack[int]{elems: make([]col.PV[int], 0)}
 
 	assert.Panics(t, func() { stack.Peek() })
 }

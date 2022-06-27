@@ -6,54 +6,50 @@ import (
 )
 
 type node[T any] struct {
-	col.KV[int, T]
+	col.PV[T]
 	left  *node[T]
 	right *node[T]
 }
 
-func (n *node[T]) isLeaf() bool {
-	return n.left == nil && n.right == nil
+func New[T any](pv col.PV[T]) *node[T] {
+	return &node[T]{PV: pv}
 }
 
-func New[T any](key int, value T) *node[T] {
-	return &node[T]{KV: col.KV[int, T]{Key: key, Val: value}}
-}
+func (n *node[T]) Insert(pv col.PV[T]) {
 
-func (n *node[T]) Insert(key int, value T) {
-
-	if key < n.Key {
+	if pv.Priority < n.Priority {
 		if n.left == nil {
-			n.left = &node[T]{KV: col.KV[int, T]{Key: key, Val: value}}
+			n.left = &node[T]{PV: pv}
 		} else {
-			n.left.Insert(key, value)
+			n.left.Insert(pv)
 		}
 	} else {
 		if n.right == nil {
-			n.right = &node[T]{KV: col.KV[int, T]{Key: key, Val: value}}
+			n.right = &node[T]{PV: pv}
 		} else {
-			n.right.Insert(key, value)
+			n.right.Insert(pv)
 		}
 	}
 }
 
-func (n *node[T]) Find(key int) (node[T], error) {
-	if n.Key == key {
+func (n *node[T]) Find(priority int) (node[T], error) {
+	if n.Priority == priority {
 		return *n, nil
 	}
 
 	if n.isLeaf() {
-		return node[T]{}, &err.KeyNotFound{Key: key}
+		return node[T]{}, &err.KeyNotFound{Key: priority}
 	}
 
-	if n.Key > key {
-		return n.left.Find(key)
+	if n.Priority > priority {
+		return n.left.Find(priority)
 	} else {
-		return n.right.Find(key)
+		return n.right.Find(priority)
 	}
 }
 
-func (root *node[T]) Remove(key int) error {
-	if root.Key == key {
+func (root *node[T]) Remove(priority int) error {
+	if root.Priority == priority {
 		// This is a special case where we're deleting the root node
 		if root.left != nil {
 			root.left.right = root.right
@@ -67,23 +63,27 @@ func (root *node[T]) Remove(key int) error {
 		return nil
 	}
 
-	return root.remove(key, root)
+	return root.remove(priority, root)
 }
 
-func (n *node[T]) remove(key int, parent *node[T]) error {
-	if n.Key == key {
+func (n *node[T]) isLeaf() bool {
+	return n.left == nil && n.right == nil
+}
+
+func (n *node[T]) remove(priority int, parent *node[T]) error {
+	if n.Priority == priority {
 		n.deleteNode(parent)
 		return nil
 	}
 
-	if n.isLeaf() && n.Key != key {
-		return &err.KeyNotFound{Key: key}
+	if n.isLeaf() && n.Priority != priority {
+		return &err.KeyNotFound{Key: priority}
 	}
 
-	if n.Key > key {
-		return n.left.remove(key, n)
+	if n.Priority > priority {
+		return n.left.remove(priority, n)
 	} else {
-		return n.right.remove(key, n)
+		return n.right.remove(priority, n)
 	}
 }
 

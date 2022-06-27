@@ -1,8 +1,8 @@
 package heap
 
 import (
-	"github.com/sgago/collections"
-	"github.com/sgago/collections/slice"
+	"github.com/sgago/col"
+	"github.com/sgago/col/slice"
 )
 
 // The heap sort order, that is, a min or max heap.
@@ -17,14 +17,14 @@ const (
 )
 
 type heap[T any] struct {
-	elems      []collections.KV[T]
+	elems      []col.PV[T]
 	bubbleUp   func(index int)
 	bubbleDown func(index int)
 }
 
-func New[T any](sort HeapSort, cap int, vals ...collections.KV[T]) *heap[T] {
+func New[T any](sort HeapSort, cap int, pvs ...col.PV[T]) *heap[T] {
 	h := heap[T]{
-		elems: make([]collections.KV[T], 0, cap),
+		elems: make([]col.PV[T], 0, cap),
 	}
 
 	if sort == Min {
@@ -35,24 +35,22 @@ func New[T any](sort HeapSort, cap int, vals ...collections.KV[T]) *heap[T] {
 		h.bubbleDown = h.bubbleDownMaxHeap
 	}
 
-	for _, val := range vals {
-		h.Push(val.Key, val.Val)
+	for _, pv := range pvs {
+		h.Push(pv)
 	}
 
 	return &h
 }
 
-func (h *heap[T]) Push(key int, val T) {
-	h.elems = append(
-		h.elems,
-		collections.KV[T]{Key: key, Val: val})
+func (h *heap[T]) Push(pv col.PV[T]) {
+	h.elems = append(h.elems, pv)
 
 	h.bubbleUp(len(h.elems) - 1)
 }
 
-func (h *heap[T]) Pop() collections.KV[T] {
+func (h *heap[T]) Pop() col.PV[T] {
 	if h.elems == nil || len(h.elems) == 0 {
-		panic("The minheap is empty.")
+		panic("The heap is empty.")
 	}
 
 	val := h.elems[0]
@@ -65,12 +63,12 @@ func (h *heap[T]) Pop() collections.KV[T] {
 	return val
 }
 
-func (h *heap[T]) Peek() collections.KV[T] {
+func (h *heap[T]) Peek() col.PV[T] {
 	if h.elems == nil || len(h.elems) == 0 {
-		panic("The minheap is empty.")
+		panic("The heap is empty.")
 	}
 
-	return collections.KV[T]{Key: h.elems[0].Key, Val: h.elems[0].Val}
+	return col.PV[T]{Priority: h.elems[0].Priority, Val: h.elems[0].Val}
 }
 
 // Count returns the number of elements in the heap.
@@ -98,7 +96,7 @@ func (h *heap[T]) Clear() {
 func (h *heap[T]) bubbleUpMinHeap(index int) {
 	parent := getParentIndex(index)
 
-	if h.elems[parent].Key > h.elems[index].Key {
+	if h.elems[parent].Priority > h.elems[index].Priority {
 		h.elems = slice.Swap(h.elems, parent, index)
 
 		if parent > 0 {
@@ -110,7 +108,7 @@ func (h *heap[T]) bubbleUpMinHeap(index int) {
 func (h *heap[T]) bubbleUpMaxHeap(index int) {
 	parent := getParentIndex(index)
 
-	if h.elems[parent].Key < h.elems[index].Key {
+	if h.elems[parent].Priority < h.elems[index].Priority {
 		h.elems = slice.Swap(h.elems, parent, index)
 
 		if parent > 0 {
@@ -127,11 +125,11 @@ func (h *heap[T]) bubbleDownMinHeap(index int) {
 		smallest := left
 		isRightEmpty := right >= len(h.elems)
 
-		if !isRightEmpty && h.elems[right].Key < h.elems[left].Key {
+		if !isRightEmpty && h.elems[right].Priority < h.elems[left].Priority {
 			smallest = right
 		}
 
-		if h.elems[index].Key > h.elems[smallest].Key {
+		if h.elems[index].Priority > h.elems[smallest].Priority {
 			h.elems = slice.Swap(h.elems, smallest, index)
 
 			h.bubbleDownMinHeap(smallest)
@@ -139,22 +137,22 @@ func (h *heap[T]) bubbleDownMinHeap(index int) {
 	}
 }
 
-func (maxheap *heap[T]) bubbleDownMaxHeap(index int) {
-	if !maxheap.isLeaf(index) {
+func (h *heap[T]) bubbleDownMaxHeap(index int) {
+	if !h.isLeaf(index) {
 		left := getLeftChildIndex(index)
 		right := getRightChildIndex(index)
 
 		largest := left
-		isRightEmpty := right >= len(maxheap.elems)
+		isRightEmpty := right >= len(h.elems)
 
-		if !isRightEmpty && maxheap.elems[left].Key > maxheap.elems[right].Key {
+		if !isRightEmpty && h.elems[left].Priority > h.elems[right].Priority {
 			largest = left
 		}
 
-		if maxheap.elems[index].Key < maxheap.elems[largest].Key {
-			maxheap.elems = slice.Swap(maxheap.elems, largest, index)
+		if h.elems[index].Priority < h.elems[largest].Priority {
+			h.elems = slice.Swap(h.elems, largest, index)
 
-			maxheap.bubbleDownMaxHeap(largest)
+			h.bubbleDownMaxHeap(largest)
 		}
 	}
 }

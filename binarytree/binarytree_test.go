@@ -1,63 +1,89 @@
 package binarytree
 
-import "testing"
+import (
+	"testing"
 
-func TestInsert_WithKeyLessThanCurrentNode_CreatesLeftNode(t *testing.T) {
-	bt := New(2, 2)
+	"github.com/sgago/col"
+	"github.com/stretchr/testify/assert"
+)
 
-	bt.Insert(1, 1)
+var pv1 col.PV[int] = col.PV[int]{Priority: 1, Val: 1}
+var pv2 col.PV[int] = col.PV[int]{Priority: 2, Val: 2}
+var pv3 col.PV[int] = col.PV[int]{Priority: 3, Val: 3}
+var pv4 col.PV[int] = col.PV[int]{Priority: 4, Val: 4}
 
-	if bt.left.Key != 1 {
-		t.Errorf("The left node should have a key of 1")
-	}
+func TestInsert_WithPriorityLessThanCurrentNode_CreatesLeftNode(t *testing.T) {
+	bt := New(pv2)
+
+	bt.Insert(pv1)
+
+	assert.Equal(t, pv1.Priority, bt.left.Priority)
 }
 
-func TestInsert_WithKeyGreaterThanCurrentNode_CreatesRightNode(t *testing.T) {
-	bt := New(2, 2)
+func TestInsert_WithPriorityGreaterThanCurrentNode_CreatesRightNode(t *testing.T) {
+	bt := New(pv2)
 
-	bt.Insert(3, 3)
+	bt.Insert(pv3)
 
-	if bt.right.Key != 3 {
-		t.Errorf("The right node should have a key of 3")
-	}
+	assert.Equal(t, pv3.Priority, bt.right.Priority)
 }
 
-func TestFind_WithKeyInTree_NodeIsFound(t *testing.T) {
+func TestFind_WithPriorityInTree_NodeIsFound(t *testing.T) {
+	bt := New(pv2)
 
-	bt := New(2, 2)
+	bt.Insert(pv1)
+	bt.Insert(pv3)
+	bt.Insert(pv4)
 
-	bt.Insert(1, 1)
-	bt.Insert(3, 3)
-	bt.Insert(4, 4)
+	node, _ := bt.Find(4)
 
-	node, notFoundError := bt.Find(4)
-
-	if notFoundError != nil {
-		t.Errorf("Expected to find %d, but it was not found", node.Key)
-	}
+	assert.Equal(t, pv4.Priority, node.Priority)
 }
 
-func TestFind_WithKeyNotInTree_ReturnsError(t *testing.T) {
+func TestFind_WithPriorityInTree_ErrorIsNil(t *testing.T) {
+	bt := New(pv2)
 
-	bt := New(2, 2)
+	bt.Insert(pv1)
+	bt.Insert(pv3)
+	bt.Insert(pv4)
 
-	bt.Insert(1, 1)
-	bt.Insert(3, 3)
-	bt.Insert(4, 4)
+	_, e := bt.Find(4)
+
+	assert.Nil(t, e)
+}
+
+func TestFind_WithPriorityNotInTree_ReturnsNilNode(t *testing.T) {
+	bt := New(pv2)
+
+	bt.Insert(pv1)
+	bt.Insert(pv3)
+	bt.Insert(pv4)
+
+	node, _ := bt.Find(7)
+
+	var expected int
+
+	assert.Equal(t, expected, node.Priority)
+}
+
+func TestFind_WithPriorityNotInTree_ReturnsError(t *testing.T) {
+	bt := New(pv2)
+
+	bt.Insert(pv1)
+	bt.Insert(pv3)
+	bt.Insert(pv4)
 
 	_, notFoundError := bt.Find(7)
 
-	if notFoundError == nil {
-		t.Error("Expected a not found error but none was returned")
-	}
+	assert.NotNil(t, notFoundError)
 }
 
 func TestRemove(t *testing.T) {
-	bt := New(2, 2)
+	bt := New(pv2)
 
-	bt.Insert(1, 1)
-	bt.Insert(3, 3)
-	bt.Insert(4, 4)
+	bt.Insert(pv1)
+	bt.Insert(pv3)
+	bt.Insert(pv4)
 
 	bt.Remove(7)
 }
