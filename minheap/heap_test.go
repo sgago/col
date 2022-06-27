@@ -3,7 +3,7 @@ package heap
 import (
 	"testing"
 
-	"github.com/sgago/collections"
+	"github.com/sgago/col"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -110,9 +110,9 @@ func TestPeek_WithMaxHeap_IsCorrect(t *testing.T) {
 func TestIsEmpty_WithElements_IsFalse(t *testing.T) {
 	cap := 1
 
-	h := New(Min, cap, collections.KeyValue[int]{
-		Key:   1,
-		Value: 1,
+	h := New(Min, cap, col.KV[int]{
+		Key: 1,
+		Val: 1,
 	})
 
 	assert.False(t, h.IsEmpty())
@@ -129,9 +129,9 @@ func TestIsEmpty_WithNoElements_IsTrue(t *testing.T) {
 func TestClear_WithElements_CountIsCorrect(t *testing.T) {
 	cap := 1
 
-	h := New(Min, cap, collections.KeyValue[int]{
-		Key:   1,
-		Value: 1,
+	h := New(Min, cap, col.KV[int]{
+		Key: 1,
+		Val: 1,
 	})
 
 	h.Clear()
@@ -142,9 +142,9 @@ func TestClear_WithElements_CountIsCorrect(t *testing.T) {
 func TestClear_WithElements_CapacityIsSame(t *testing.T) {
 	cap := 1
 
-	h := New(Min, cap, collections.KeyValue[int]{
-		Key:   1,
-		Value: 1,
+	h := New(Min, cap, col.KV[int]{
+		Key: 1,
+		Val: 1,
 	})
 
 	h.Clear()

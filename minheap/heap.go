@@ -17,14 +17,14 @@ const (
 )
 
 type heap[T any] struct {
-	elems      []collections.KeyValue[T]
+	elems      []collections.KV[T]
 	bubbleUp   func(index int)
 	bubbleDown func(index int)
 }
 
-func New[T any](sort HeapSort, cap int, vals ...collections.KeyValue[T]) *heap[T] {
+func New[T any](sort HeapSort, cap int, vals ...collections.KV[T]) *heap[T] {
 	h := heap[T]{
-		elems: make([]collections.KeyValue[T], 0, cap),
+		elems: make([]collections.KV[T], 0, cap),
 	}
 
 	if sort == Min {
@@ -36,7 +36,7 @@ func New[T any](sort HeapSort, cap int, vals ...collections.KeyValue[T]) *heap[T
 	}
 
 	for _, val := range vals {
-		h.Push(val.Key, val.Value)
+		h.Push(val.Key, val.Val)
 	}
 
 	return &h
@@ -45,12 +45,12 @@ func New[T any](sort HeapSort, cap int, vals ...collections.KeyValue[T]) *heap[T
 func (h *heap[T]) Push(key int, val T) {
 	h.elems = append(
 		h.elems,
-		collections.KeyValue[T]{Key: key, Value: val})
+		collections.KV[T]{Key: key, Val: val})
 
 	h.bubbleUp(len(h.elems) - 1)
 }
 
-func (h *heap[T]) Pop() collections.KeyValue[T] {
+func (h *heap[T]) Pop() collections.KV[T] {
 	if h.elems == nil || len(h.elems) == 0 {
 		panic("The minheap is empty.")
 	}
@@ -65,12 +65,12 @@ func (h *heap[T]) Pop() collections.KeyValue[T] {
 	return val
 }
 
-func (h *heap[T]) Peek() collections.KeyValue[T] {
+func (h *heap[T]) Peek() collections.KV[T] {
 	if h.elems == nil || len(h.elems) == 0 {
 		panic("The minheap is empty.")
 	}
 
-	return collections.KeyValue[T]{Key: h.elems[0].Key, Value: h.elems[0].Value}
+	return collections.KV[T]{Key: h.elems[0].Key, Val: h.elems[0].Val}
 }
 
 // Count returns the number of elements in the heap.

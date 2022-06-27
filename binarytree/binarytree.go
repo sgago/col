@@ -1,12 +1,12 @@
 package binarytree
 
 import (
-	"github.com/sgago/collections"
-	"github.com/sgago/collections/err"
+	"github.com/sgago/col"
+	"github.com/sgago/col/err"
 )
 
 type node[T any] struct {
-	collections.KeyValue[T]
+	col.KV[int, T]
 	left  *node[T]
 	right *node[T]
 }
@@ -16,20 +16,20 @@ func (n *node[T]) isLeaf() bool {
 }
 
 func New[T any](key int, value T) *node[T] {
-	return &node[T]{KeyValue: collections.KeyValue[T]{Key: key, Value: value}}
+	return &node[T]{KV: col.KV[int, T]{Key: key, Val: value}}
 }
 
 func (n *node[T]) Insert(key int, value T) {
 
 	if key < n.Key {
 		if n.left == nil {
-			n.left = &node[T]{KeyValue: collections.KeyValue[T]{Key: key, Value: value}}
+			n.left = &node[T]{KV: col.KV[int, T]{Key: key, Val: value}}
 		} else {
 			n.left.Insert(key, value)
 		}
 	} else {
 		if n.right == nil {
-			n.right = &node[T]{KeyValue: collections.KeyValue[T]{Key: key, Value: value}}
+			n.right = &node[T]{KV: col.KV[int, T]{Key: key, Val: value}}
 		} else {
 			n.right.Insert(key, value)
 		}

@@ -8,7 +8,7 @@
 package stack
 
 import (
-	"github.com/sgago/collections/slice"
+	"github.com/sgago/col/slice"
 )
 
 // An unbounded, slice-backed stack data structure with type T elements.

@@ -3,7 +3,7 @@ package slice
 import (
 	"sync"
 
-	"github.com/sgago/collections/err"
+	"github.com/sgago/col/err"
 )
 
 const notFound int = -1

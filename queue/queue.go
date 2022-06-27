@@ -8,7 +8,7 @@
 package queue
 
 import (
-	"github.com/sgago/collections/slice"
+	"github.com/sgago/col/slice"
 )
 
 // An unbounded, slice-backed queue data structure with type T elements.

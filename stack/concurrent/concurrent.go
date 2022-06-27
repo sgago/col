@@ -9,7 +9,7 @@ package concurrent
 import (
 	"sync"
 
-	"github.com/sgago/collections/slice"
+	"github.com/sgago/col/slice"
 )
 
 // An unbounded, slice-backed, thread-safe stack data structure with type T elements.

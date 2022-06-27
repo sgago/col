@@ -1,6 +1,7 @@
-package collections
+package col
 
-type KeyValue[T any] struct {
-	Key   int
-	Value T
+// A KeyValue data structure.
+type KV[K any, T any] struct {
+	Key K
+	Val T
 }
