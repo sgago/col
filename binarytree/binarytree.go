@@ -11,8 +11,18 @@ type node[T any] struct {
 	right *node[T]
 }
 
-func New[T any](pv col.PV[T]) *node[T] {
-	return &node[T]{PV: pv}
+func New[T any](pvs ...col.PV[T]) *node[T] {
+	if len(pvs) > 0 {
+		node := node[T]{PV: pvs[0]}
+
+		for _, pv := range pvs {
+			node.Insert(pv)
+		}
+
+		return &node
+	}
+
+	return &node[T]{}
 }
 
 func (n *node[T]) Insert(pv col.PV[T]) {
