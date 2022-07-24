@@ -7,10 +7,12 @@ import (
 	"github.com/sgago/col/err"
 )
 
-func firstWorker[T any](slice []T, predicate func(index int, value T) bool, start int, end int) (int, T, error) {
+func lastWorker[T any](slice []T, predicate func(index int, value T) bool, start int, end int) (int, T, error) {
 	var defaultType T
 
-	for index, value := range slice[start:end] {
+	for index := end - start - 1; index >= 0; index-- {
+		value := slice[index]
+
 		if predicate(index, value) {
 			return index, value, nil
 		}
@@ -19,7 +21,7 @@ func firstWorker[T any](slice []T, predicate func(index int, value T) bool, star
 	return NotFound, defaultType, &err.NotFound{}
 }
 
-func First[T any](slice []T, predicate func(index int, value T) bool) (int, T, error) {
+func Last[T any](slice []T, predicate func(index int, value T) bool) (int, T, error) {
 	var notFoundValue T
 
 	if len(slice) == 0 {
@@ -27,7 +29,7 @@ func First[T any](slice []T, predicate func(index int, value T) bool) (int, T, e
 	}
 
 	if predicate == nil {
-		return 0, slice[0], nil
+		return 0, slice[len(slice)-1], nil
 	}
 
 	max := maxElems
@@ -39,7 +41,7 @@ func First[T any](slice []T, predicate func(index int, value T) bool) (int, T, e
 	}
 
 	if workers < 2 {
-		return firstWorker(slice, predicate, 0, len(slice))
+		return lastWorker(slice, predicate, 0, len(slice))
 	}
 
 	pvs := make(chan col.PV[T], workers)
@@ -57,7 +59,7 @@ func First[T any](slice []T, predicate func(index int, value T) bool) (int, T, e
 
 		go func(s []T, start int, end int, result chan<- col.PV[T]) {
 			defer wg.Done()
-			i, v, e := firstWorker(s, predicate, start, end)
+			i, v, e := lastWorker(s, predicate, start, end)
 
 			if e == nil {
 				result <- col.PV[T]{Priority: i, Val: v}

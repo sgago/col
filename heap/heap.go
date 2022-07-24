@@ -55,7 +55,7 @@ func (h *heap[T]) Pop() col.PV[T] {
 
 	val := h.elems[0]
 
-	h.elems[0], _ = slice.Last(h.elems, nil)
+	_, h.elems[0], _ = slice.Last(h.elems, nil)
 	h.elems = slice.RemoveLast(h.elems)
 
 	h.bubbleDown(0)

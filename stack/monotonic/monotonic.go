@@ -119,7 +119,7 @@ func (s *monostack[T]) Pop() col.PV[T] {
 		panic("The stack is empty.")
 	}
 
-	last, _ := slice.Last(s.elems, nil)
+	_, last, _ := slice.Last(s.elems, nil)
 
 	s.elems = slice.RemoveLast(s.elems)
 

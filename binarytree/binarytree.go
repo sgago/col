@@ -15,7 +15,7 @@ func New[T any](pvs ...col.PV[T]) *node[T] {
 	if len(pvs) > 0 {
 		node := node[T]{PV: pvs[0]}
 
-		for _, pv := range pvs {
+		for _, pv := range pvs[1:] {
 			node.Insert(pv)
 		}
 
