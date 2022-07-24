@@ -7,29 +7,29 @@ import (
 )
 
 const (
-	notFound          int = -1
-	defaultMaxWorkers int = 4
-	defaultMaxElems   int = 100_000
+	NotFound                int = -1
+	DefaultMaxSearchWorkers int = 4
+	DefaultMaxSearchLength  int = 100_000
 )
 
 var (
-	maxElems   = defaultMaxElems
-	maxWorkers = defaultMaxWorkers
+	maxElems   = DefaultMaxSearchLength
+	maxWorkers = DefaultMaxSearchWorkers
 )
 
 func SetMaxSearchLength(length int) {
 	if length > 0 {
 		maxElems = length
 	} else {
-		maxElems = defaultMaxElems
+		maxElems = DefaultMaxSearchLength
 	}
 }
 
-func SetMaxWorkers(workers int) {
+func SetMaxSearchWorkers(workers int) {
 	if workers > 0 {
 		maxWorkers = workers
 	} else {
-		maxWorkers = defaultMaxWorkers
+		maxWorkers = DefaultMaxSearchWorkers
 	}
 }
 
@@ -136,7 +136,7 @@ func indexOfWorker[T comparable](slice []T, value T, start int, end int) (int, e
 		}
 	}
 
-	return notFound, &err.NotFound{}
+	return NotFound, &err.NotFound{}
 }
 
 func IndexOf[T comparable](slice []T, value T) (int, error) {
@@ -171,7 +171,7 @@ func IndexOf[T comparable](slice []T, value T) (int, error) {
 			if e == nil {
 				result <- index
 			} else {
-				result <- notFound
+				result <- NotFound
 			}
 		}(slice, start, end, indexes)
 	}
@@ -179,17 +179,17 @@ func IndexOf[T comparable](slice []T, value T) (int, error) {
 	indexOfWg.Wait()
 	close(indexes)
 
-	result := notFound
+	result := NotFound
 
 	for index := range indexes {
-		if index != notFound && (result == notFound || index < result) {
+		if index != NotFound && (result == NotFound || index < result) {
 			result = index
 		}
 	}
 
-	if result != notFound {
+	if result != NotFound {
 		return result, nil
 	}
 
-	return notFound, &err.NotFound{}
+	return NotFound, &err.NotFound{}
 }

@@ -17,8 +17,8 @@ func BenchmarkIndexOfWorker(b *testing.B) {
 
 func BenchmarkIndexOfConcurrentDefaults(b *testing.B) {
 
-	maxElems = defaultMaxElems
-	maxWorkers = defaultMaxWorkers
+	maxElems = DefaultMaxSearchLength
+	maxWorkers = DefaultMaxSearchWorkers
 
 	values := make([]int, b.N)
 
