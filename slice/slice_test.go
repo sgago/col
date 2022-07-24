@@ -10,7 +10,7 @@ func TestFirst_WithNilPredicate_ReturnsFirstElement(t *testing.T) {
 	s := make([]int, 0, 5)
 	s = append(s, 1, 2, 3, 4, 5)
 
-	first, _ := First(s, nil)
+	_, first, _ := First(s, nil)
 
 	assert.Equal(t, first, 1)
 }
@@ -19,7 +19,7 @@ func TestFirst_WithPredicateReturningTrue_ReturnsFirstElement(t *testing.T) {
 	s := make([]int, 0, 5)
 	s = append(s, 1, 2, 3, 4, 5)
 
-	first, _ := First(s, func(i int, v int) bool {
+	_, first, _ := First(s, func(i int, v int) bool {
 		return v == 3
 	})
 
@@ -30,7 +30,7 @@ func TestFirst_WithPredicateReturningTrue_ReturnsNilError(t *testing.T) {
 	s := make([]int, 0, 5)
 	s = append(s, 1, 2, 3, 4, 5)
 
-	_, e := First(s, func(i int, v int) bool {
+	_, _, e := First(s, func(i int, v int) bool {
 		return v == 3
 	})
 
@@ -41,7 +41,7 @@ func TestFirst_WithPredicateReturningFalse_ReturnsDefault(t *testing.T) {
 	s := make([]int, 0, 5)
 	s = append(s, 1, 2, 3, 4, 5)
 
-	first, _ := First(s, func(i int, v int) bool {
+	_, first, _ := First(s, func(i int, v int) bool {
 		return v == 123
 	})
 
@@ -52,7 +52,7 @@ func TestFirst_WithPredicateReturningFalse_ReturnsError(t *testing.T) {
 	s := make([]int, 0, 5)
 	s = append(s, 1, 2, 3, 4, 5)
 
-	_, e := First(s, func(i int, v int) bool {
+	_, _, e := First(s, func(i int, v int) bool {
 		return v == 123
 	})
 

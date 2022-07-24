@@ -3,6 +3,7 @@ package slice
 import (
 	"sync"
 
+	"github.com/sgago/col"
 	"github.com/sgago/col/err"
 )
 
@@ -13,6 +14,8 @@ const (
 )
 
 var (
+	indexOfWg  sync.WaitGroup
+	firstWg    sync.WaitGroup
 	maxElems   = DefaultMaxSearchLength
 	maxWorkers = DefaultMaxSearchWorkers
 )
@@ -33,6 +36,78 @@ func SetMaxSearchWorkers(workers int) {
 	}
 }
 
+func predicateWorker[T any](slice []T, predicate func(index int, value T) bool, start int, end int) (int, T, error) {
+	var defaultType T
+
+	for index, value := range slice {
+		if predicate(index, value) {
+			return index, value, nil
+		}
+	}
+
+	return NotFound, defaultType, &err.NotFound{}
+}
+
+func First[T any](slice []T, predicate func(index int, value T) bool) (int, T, error) {
+	var notFoundValue T
+
+	if len(slice) == 0 {
+		panic("The slice is empty.")
+	}
+
+	if predicate == nil {
+		return 0, slice[0], nil
+	}
+
+	max := maxElems
+
+	workers := len(slice) / max
+
+	if workers > maxWorkers {
+		workers = maxWorkers
+	}
+
+	if workers == 0 {
+		return predicateWorker(slice, predicate, 0, len(slice))
+	}
+
+	pvs := make(chan col.PV[T], workers)
+
+	for i := 0; i < workers; i++ {
+		firstWg.Add(1)
+
+		start := i * max
+		end := len(slice)
+
+		if i < workers-1 {
+			end = start + max
+		}
+
+		go func(s []T, start int, end int, result chan<- col.PV[T]) {
+			defer firstWg.Done()
+			i, v, e := predicateWorker(s, predicate, start, end)
+
+			if e == nil {
+				result <- col.PV[T]{Priority: i, Val: v}
+			} else {
+				result <- col.PV[T]{Priority: NotFound, Val: notFoundValue}
+			}
+		}(slice, start, end, pvs)
+	}
+
+	firstWg.Wait()
+	close(pvs)
+
+	for pv := range pvs {
+		if pv.Priority != NotFound {
+			return pv.Priority, pv.Val, nil
+		}
+	}
+
+	return NotFound, notFoundValue, &err.NotFound{}
+}
+
+/*
 func First[T any](slice []T, predicate func(index int, value T) bool) (T, error) {
 	if len(slice) == 0 {
 		panic("The slice is empty.")
@@ -52,6 +127,7 @@ func First[T any](slice []T, predicate func(index int, value T) bool) (T, error)
 
 	return notFoundValue, &err.NotFound{}
 }
+*/
 
 func Last[T any](slice []T, predicate func(index int, value T) bool) (T, error) {
 	if len(slice) == 0 {
@@ -126,8 +202,6 @@ func All[T any](slice []T, predicate func(index int, value T) bool) bool {
 
 	return true
 }
-
-var indexOfWg sync.WaitGroup
 
 func indexOfWorker[T comparable](slice []T, value T, start int, end int) (int, error) {
 	for index, val := range slice[start:end] {
