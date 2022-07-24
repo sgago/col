@@ -1,56 +1,46 @@
 package slice
 
 import (
-	"sync"
-
 	"github.com/sgago/col/err"
 )
 
 const (
-	notFound          int = -1
-	defaultMaxWorkers int = 4
-	defaultMaxElems   int = 100_000
+	NotFound                int = -1
+	DefaultMaxSearchWorkers int = 4
+	DefaultMaxSearchLength  int = 100_000
 )
 
 var (
-	maxElems   = defaultMaxElems
-	maxWorkers = defaultMaxWorkers
+	maxElems   = DefaultMaxSearchLength
+	maxWorkers = DefaultMaxSearchWorkers
 )
 
 func SetMaxSearchLength(length int) {
 	if length > 0 {
 		maxElems = length
 	} else {
-		maxElems = defaultMaxElems
+		maxElems = DefaultMaxSearchLength
 	}
 }
 
-func SetMaxWorkers(workers int) {
+func SetMaxSearchWorkers(workers int) {
 	if workers > 0 {
 		maxWorkers = workers
 	} else {
-		maxWorkers = defaultMaxWorkers
+		maxWorkers = DefaultMaxSearchWorkers
 	}
 }
 
-func First[T any](slice []T, predicate func(index int, value T) bool) (T, error) {
-	if len(slice) == 0 {
-		panic("The slice is empty.")
-	}
+func predicateWorker[T any](slice []T, predicate func(index int, value T) bool, start int, end int) (int, T, error) {
+	var defaultType T
 
-	if predicate == nil {
-		return slice[0], nil
-	}
-
-	for index, value := range slice {
+	for index, value := range slice[start:end] {
 		if predicate(index, value) {
-			return value, nil
+			return index, value, nil
 		}
 	}
 
-	var notFoundValue T
-
-	return notFoundValue, &err.NotFound{}
+	return NotFound, defaultType, &err.NotFound{}
 }
 
 func Last[T any](slice []T, predicate func(index int, value T) bool) (T, error) {
@@ -125,71 +115,4 @@ func All[T any](slice []T, predicate func(index int, value T) bool) bool {
 	}
 
 	return true
-}
-
-var indexOfWg sync.WaitGroup
-
-func indexOfWorker[T comparable](slice []T, value T, start int, end int) (int, error) {
-	for index, val := range slice[start:end] {
-		if value == val {
-			return index + start, nil
-		}
-	}
-
-	return notFound, &err.NotFound{}
-}
-
-func IndexOf[T comparable](slice []T, value T) (int, error) {
-	max := maxElems
-
-	workers := len(slice) / max
-
-	if workers > maxWorkers {
-		workers = maxWorkers
-	}
-
-	if workers == 0 {
-		return indexOfWorker(slice, value, 0, len(slice))
-	}
-
-	indexes := make(chan int, workers)
-
-	for i := 0; i < workers; i++ {
-		indexOfWg.Add(1)
-
-		start := i * max
-		end := len(slice)
-
-		if i < workers-1 {
-			end = start + max
-		}
-
-		go func(s []T, start int, end int, result chan<- int) {
-			defer indexOfWg.Done()
-			index, e := indexOfWorker(s, value, start, end)
-
-			if e == nil {
-				result <- index
-			} else {
-				result <- notFound
-			}
-		}(slice, start, end, indexes)
-	}
-
-	indexOfWg.Wait()
-	close(indexes)
-
-	result := notFound
-
-	for index := range indexes {
-		if index != notFound && (result == notFound || index < result) {
-			result = index
-		}
-	}
-
-	if result != notFound {
-		return result, nil
-	}
-
-	return notFound, &err.NotFound{}
 }
