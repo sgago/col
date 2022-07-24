@@ -11,11 +11,14 @@ func BenchmarkIndexOfWorker(b *testing.B) {
 	}
 
 	for i := 0; i < b.N; i++ {
-		indexOfWorker(values, b.N-1)
+		indexOfWorker(values, b.N-1, 0, b.N-1)
 	}
 }
 
-func BenchmarkIndexOfC(b *testing.B) {
+func BenchmarkIndexOfConcurrentDefaults(b *testing.B) {
+
+	maxElems = defaultMaxElems
+	maxWorkers = defaultMaxWorkers
 
 	values := make([]int, b.N)
 

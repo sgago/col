@@ -176,7 +176,7 @@ func TestIndexOf_ValueExists_ReturnsIndex(t *testing.T) {
 
 	i, _ := IndexOf(values, count-1)
 
-	assert.Equal(t, i, count-1)
+	assert.Equal(t, count-1, i)
 }
 
 func TestIndexOf_ValueExists_ReturnsNilError(t *testing.T) {

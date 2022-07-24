@@ -6,7 +6,32 @@ import (
 	"github.com/sgago/col/err"
 )
 
-const notFound int = -1
+const (
+	notFound          int = -1
+	defaultMaxWorkers int = 4
+	defaultMaxElems   int = 100_000
+)
+
+var (
+	maxElems   = defaultMaxElems
+	maxWorkers = defaultMaxWorkers
+)
+
+func SetMaxSearchLength(length int) {
+	if length > 0 {
+		maxElems = length
+	} else {
+		maxElems = defaultMaxElems
+	}
+}
+
+func SetMaxWorkers(workers int) {
+	if workers > 0 {
+		maxWorkers = workers
+	} else {
+		maxWorkers = defaultMaxWorkers
+	}
+}
 
 func First[T any](slice []T, predicate func(index int, value T) bool) (T, error) {
 	if len(slice) == 0 {
@@ -104,10 +129,10 @@ func All[T any](slice []T, predicate func(index int, value T) bool) bool {
 
 var indexOfWg sync.WaitGroup
 
-func indexOfWorker[T comparable](slice []T, value T) (int, error) {
-	for index, val := range slice {
+func indexOfWorker[T comparable](slice []T, value T, start int, end int) (int, error) {
+	for index, val := range slice[start:end] {
 		if value == val {
-			return index, nil
+			return index + start, nil
 		}
 	}
 
@@ -115,12 +140,16 @@ func indexOfWorker[T comparable](slice []T, value T) (int, error) {
 }
 
 func IndexOf[T comparable](slice []T, value T) (int, error) {
-	max := 10_000
+	max := maxElems
 
 	workers := len(slice) / max
 
+	if workers > maxWorkers {
+		workers = maxWorkers
+	}
+
 	if workers == 0 {
-		return indexOfWorker(slice, value)
+		return indexOfWorker(slice, value, 0, len(slice))
 	}
 
 	indexes := make(chan int, workers)
@@ -135,16 +164,16 @@ func IndexOf[T comparable](slice []T, value T) (int, error) {
 			end = start + max
 		}
 
-		go func(w int, s []T, result chan<- int) {
+		go func(s []T, start int, end int, result chan<- int) {
 			defer indexOfWg.Done()
-			index, e := indexOfWorker(s, value)
+			index, e := indexOfWorker(s, value, start, end)
 
 			if e == nil {
-				result <- index + w*max
+				result <- index
 			} else {
 				result <- notFound
 			}
-		}(i, slice[start:end], indexes)
+		}(slice, start, end, indexes)
 	}
 
 	indexOfWg.Wait()
