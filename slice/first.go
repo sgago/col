@@ -11,14 +11,24 @@ func firstWorker[T any](slice []T, predicate func(index int, value T) bool, star
 	var defaultType T
 
 	for index, value := range slice[start:end] {
-		if predicate(index, value) {
-			return index, value, nil
+		if predicate(index+start, value) {
+			return index + start, value, nil
 		}
 	}
 
 	return NotFound, defaultType, &err.NotFound{}
 }
 
+// First finds the first index and value in a slice that satisfies the
+// predicate. If no value is found, First returns an error.
+//
+// The return values of First are index, value, and error, respectively.
+//
+// Example usage(s):
+//
+// index, value, error := First(myslice, nil)
+//
+// index, value, error := First(myslice, func(index, value) { value == 123 })
 func First[T any](slice []T, predicate func(index int, value T) bool) (int, T, error) {
 	var notFoundValue T
 

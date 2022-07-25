@@ -68,7 +68,7 @@ func TestFirst_With0LengthSlice_Panics(t *testing.T) {
 func TestFirst_WithGoRoutines_PredicateReturningTrue_ReturnsFirstIndex(t *testing.T) {
 	count := 3 * DefaultMaxSearchLength
 
-	s := make([]int, count)
+	s := make([]int, 0, count)
 
 	for i := 0; i < count; i++ {
 		s = append(s, i)
@@ -84,7 +84,7 @@ func TestFirst_WithGoRoutines_PredicateReturningTrue_ReturnsFirstIndex(t *testin
 func TestFirst_WithGoRoutines_PredicateReturningTrue_ReturnsFirstValue(t *testing.T) {
 	count := 3 * DefaultMaxSearchLength
 
-	s := make([]int, count)
+	s := make([]int, 0, count)
 
 	for i := 0; i < count; i++ {
 		s = append(s, i)
@@ -100,7 +100,7 @@ func TestFirst_WithGoRoutines_PredicateReturningTrue_ReturnsFirstValue(t *testin
 func TestFirst_WithGoRoutines_PredicateReturningTrue_ReturnsNilError(t *testing.T) {
 	count := 3 * DefaultMaxSearchLength
 
-	s := make([]int, count)
+	s := make([]int, 0, count)
 
 	for i := 0; i < count; i++ {
 		s = append(s, i)
@@ -116,7 +116,7 @@ func TestFirst_WithGoRoutines_PredicateReturningTrue_ReturnsNilError(t *testing.
 func TestFirst_WithGoRoutines_PredicateReturningFalse_ReturnsNotFoundIndex(t *testing.T) {
 	count := 3 * DefaultMaxSearchLength
 
-	s := make([]int, count)
+	s := make([]int, 0, count)
 
 	for i := 0; i < count; i++ {
 		s = append(s, i)
@@ -132,7 +132,7 @@ func TestFirst_WithGoRoutines_PredicateReturningFalse_ReturnsNotFoundIndex(t *te
 func TestFirst_WithGoRoutines_PredicateReturningFalse_ReturnsDefaultValue(t *testing.T) {
 	count := 3 * DefaultMaxSearchLength
 
-	s := make([]int, count)
+	s := make([]int, 0, count)
 
 	for i := 0; i < count; i++ {
 		s = append(s, i)
@@ -148,7 +148,7 @@ func TestFirst_WithGoRoutines_PredicateReturningFalse_ReturnsDefaultValue(t *tes
 func TestFirst_WithGoRoutines_PredicateReturningFalse_ReturnsError(t *testing.T) {
 	count := 3 * DefaultMaxSearchLength
 
-	s := make([]int, count)
+	s := make([]int, 0, count)
 
 	for i := 0; i < count; i++ {
 		s = append(s, i)

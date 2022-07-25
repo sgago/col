@@ -21,6 +21,16 @@ func lastWorker[T any](slice []T, predicate func(index int, value T) bool, start
 	return NotFound, defaultType, &err.NotFound{}
 }
 
+// Last finds the last index and value in a slice that satisfies the
+// predicate. If no value is found, Last returns an error.
+//
+// The return values of Last are index, value, and error, respectively.
+//
+// Example usage(s):
+//
+// index, value, error := Last(myslice, func(index, value) { value == 123 })
+//
+// index, value, error := Last(myslice, nil)
 func Last[T any](slice []T, predicate func(index int, value T) bool) (int, T, error) {
 	var notFoundValue T
 

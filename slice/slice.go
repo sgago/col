@@ -1,9 +1,17 @@
+// Package slice provides go-routine-backed
+// functions for searching and modifying unsorted slices.
 package slice
 
 const (
-	NotFound                int = -1
+	// The not found index value.
+	NotFound int = -1
+
+	// The default maximum number of worker values.
 	DefaultMaxSearchWorkers int = 4
-	DefaultMaxSearchLength  int = 100_000
+
+	// The default maximum number of search elements
+	// before creating a new worker.
+	DefaultMaxSearchLength int = 100_000
 )
 
 var (
@@ -11,12 +19,20 @@ var (
 	maxWorkers = DefaultMaxSearchWorkers
 )
 
+func GetMaxSearchLength() int {
+	return maxElems
+}
+
 func SetMaxSearchLength(length int) {
 	if length > 0 {
 		maxElems = length
 	} else {
 		maxElems = DefaultMaxSearchLength
 	}
+}
+
+func GetMaxSearchWorkers() int {
+	return maxWorkers
 }
 
 func SetMaxSearchWorkers(workers int) {
@@ -27,6 +43,8 @@ func SetMaxSearchWorkers(workers int) {
 	}
 }
 
+// Clear removes all elements from a slice
+// and maintains the slice's current capacity.
 func Clear[T any](slice []T) []T {
 	return make([]T, 0, cap(slice))
 }
@@ -39,6 +57,7 @@ func RemoveLast[T any](slice []T) []T {
 	return slice[:len(slice)-1]
 }
 
+// Swap flips the element values at indexA and indexB.
 func Swap[T any](slice []T, indexA int, indexB int) []T {
 	temp := slice[indexA]
 	slice[indexA] = slice[indexB]

@@ -18,7 +18,7 @@ type concstack[T any] struct {
 	mu       sync.Mutex
 }
 
-// Allocates and initializes a new stack with type T elements.
+// New allocates and initializes a new stack with type T elements.
 //
 // Values are pushed by index in ascending (non-decreasing) order.
 // In other wrods, the first value, values[0], will be pushed first.
